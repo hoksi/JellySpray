@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once APPPATH . 'class/spray.php';
 /**
- * MA03(회원로그아웃 전문)
+ * 회원로그아웃 전문
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
@@ -23,10 +23,5 @@ class logout extends Spray {
 		}
 
 		return $this->get_res();
-	}
-
-	function validation()
-	{
-		return TRUE;
 	}
 }

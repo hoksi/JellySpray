@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once APPPATH . 'class/spray.php';
 /**
- * MA02(회원가입전문)
+ * 회원가입전문
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */

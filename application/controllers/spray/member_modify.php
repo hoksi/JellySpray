@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once APPPATH . 'class/spray.php';
 /**
- * MA04(회원정보수정전문)
+ * 회원정보수정전문
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
@@ -54,25 +54,14 @@ class member_modify extends Spray {
 			$this->post_data = array(
 				// 'password' => $this->input->post('password'),
 				'nickname' => $this->input->post('nickname')
-				// 'uuid' => $this->input->post('uuid'),
 				// 'profile_img_path' => '',
-				// 'devicekey' => $this->input->post('devicekey')
 			);
 
 			// 등록된 Email인지 검사 한다.
 			if($this->member_model->exists_nickname($this->post_data['nickname'], $this->bu_session['member_id'])){
-				$this->responseCode = 'MA04_0003';
+				$this->responseCode = 3;
 				$this->responseMessage = '등록된 NickName 입니다.';
 			} else {
-				/*
-				// debug
-				$this->post_data['password'] = (
-					  $this->_debug && strlen($this->post_data['password']) < 32
-					? md5($this->post_data['password'])
-					: $this->post_data['password']
-				);
-				*/
-
 				$ret = TRUE;
 			}
 
@@ -80,11 +69,11 @@ class member_modify extends Spray {
 		} else {
 			foreach(explode("\n", strip_tags(validation_errors())) as $err) {
 				if(strstr($err, 'Nickname')) {
-					$this->responseCode = 'MA04_0001';
+					$this->responseCode = 1;
 					$err = 'Nickname 누락';
 					break;
 				} else {
-					$this->responseCode = 'MA04_0001';
+					$this->responseCode = 1;
 					$err = validation_errors();
 				}
 			}
