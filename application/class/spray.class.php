@@ -6,21 +6,81 @@
  * @author		한대승 <hoksi2k@hanmail.net>
  */
 class Spray extends CI_Controller {
+	/**
+	 * Debug 상태 여부 확인
+	 *
+	 * @var string
+	 */
 	public $_debug = FALSE;
+	
+	/**
+	 * 결과값 반환 형식
+	 *
+	 * @var string
+	 */
 	public $_mode;
+	
+	/**
+	 * 세션키
+	 *
+	 * @var string
+	 */
 	public $_auth_key;
-	public $_ptype;
-	public $_login;
+	
+	/**
+	 * 사용자 데이터를 관리 하는 세션 객체 또는 배열
+	 *
+	 * @var array or object
+	 */
 	public $bu_session;
+	
+	/**
+	 * 모델에서 반환한 데이터를 관리 하는 객체 또는 배열
+	 *
+	 * @var array or object
+	 */
 	public $data;
+	
+	/**
+	 * URI 세그먼트를 관리 하는 배열
+	 *
+	 * @var array
+	 */
 	protected $_params;
+	
+	/**
+	 * 반환 코드 : 에러인 경우 0 이 아닌 값을 가지게 됨
+	 *
+	 * @var int
+	 */
 	protected $responseCode = 0;
+	
+	/**
+	 * 반환 메시지  : 에러인 경우 해당 에러를 문자열로 가지게 됨
+	 *
+	 * @var string
+	 */
 	protected $responseMessage = '';
+	
+	/**
+	 * 로그인 하지 않고 사용 가능한 커맨드를 관리 하는 배열
+	 *
+	 * @var array
+	 */
 	private $public_cmd;
 
+	/**
+	 * 생성자
+	 * 스프레이를 초기화 한다. 
+	 *
+	 * @return void
+	 */
 	public function __construct()
 	{
 		parent::__construct();
+
+		// 인증키 생성
+		// session_start();
 
 		// 환경 파일 load
 		$this->config->load('spray');
@@ -35,11 +95,16 @@ class Spray extends CI_Controller {
 		$this->output->set_header("Pragma: no-cache");
 
 		$this->data = array();
-		$this->_auth_key = $this->uri->segment(4);
-		$this->_ptype = strtoupper($this->uri->segment(5));
 		$this->public_cmd = $this->config->item('public_cmd');
 	}
 
+	/**
+	 * 라우팅을 관리 하여 전문을 분석한다.
+	 *
+	 * @param string $method
+	 * @param array $params
+	 * @return void
+	 */
 	public function _remap($method, $params=array())
 	{
 		$cmd = array('debug', 'json', 'xml', 'test');
@@ -55,17 +120,20 @@ class Spray extends CI_Controller {
 
 	/**
 	 * 전문 테스트
-	 * @param String $command
+	 * @param String $auth
 	 */
 	public function test($auth = NULL)
 	{
-		$this->load->view('spray_test', array('command' => $this->router->fetch_class(), 'auth' => $auth));
+		if(in_array($this->router->fetch_class(), $this->public_cmd) !== FALSE || $this->session_model->exists_session_id($this->_auth_key)) {
+			$this->load->view('spray_test', array('command' => $this->router->fetch_class(), 'auth' => $auth));
+		} else {
+			echo "<a href='/spray/login/test'>Login first!! - Click me</a>";
+		}
 	}
 
 
 	/**
 	 * 전문 Debug
-	 * @param String $command
 	 */
 	public function debug()
 	{
@@ -79,7 +147,6 @@ class Spray extends CI_Controller {
 
 	/**
 	 * XML형식으로 출력
-	 * @param String $command
 	 */
 	public function xml()
 	{
@@ -92,7 +159,6 @@ class Spray extends CI_Controller {
 
 	/**
 	 * JSON형식으로 출력
-	 * @param String $command
 	 */
 	public function json()
 	{
@@ -104,12 +170,10 @@ class Spray extends CI_Controller {
 
 	/**
 	 * 요청에 해당하는 전문을 처리후 적절한 방식에 따라 출력
-	 * @param String $command
 	 */
 	private function _request()
 	{
-
-		// POST로 전송된 값 Debug
+		// POST로 전송된 값 Debug 하기 위해 Log로 남긴다.
 		if($this->config->item('log_threshold')) {
 			$this->load->library('user_agent');
 
@@ -122,8 +186,10 @@ class Spray extends CI_Controller {
 
 		// 세션 검증 로직
 		if($this->session_model->exists_session_id($this->_auth_key)) {
+			// 로그인 한 사용자의 정보를 가져온다.
 			$this->bu_session = $this->session_model->get_userdata($this->_auth_key);
 		} elseif(in_array($this->router->fetch_class(), $this->public_cmd) === FALSE) {
+			// 로그인이 필요한 전문인 경우 로그인 요청을 한다.
 			$this->responseCode = 9997;
 			$this->responseMessage = '로그인이 필요합니다.';
 		}

@@ -24,7 +24,7 @@ class Login extends Spray {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Member Login';
 				
-				$this->member_model->update_last_login($row['member_id'], NULL);
+				$this->member_model->update_last_login($row['member_id']);
 
 				$session_id = md5($row['password'] . $row['member_id']);
 				$data = array(

@@ -30,9 +30,9 @@ class Setup extends CI_Controller {
 	{
 		// Rollback
 		if (!$this->migration->version( $this->version - 1 )) {
-			echo $this->migration->error_string();
-		} else {
 			echo "Rollback OK";
+		} else {
+			echo $this->migration->error_string();
 		}
 
 	}

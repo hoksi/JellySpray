@@ -397,8 +397,10 @@ class CI_DB_driver {
 			// and save it)
 			$CR = new CI_DB_result();
 			$CR->num_rows		= $RES->num_rows();
-			$CR->result_object	= $RES->result_object();
-			$CR->result_array	= $RES->result_array();
+			// $CR->result_object	= $RES->result_object();
+			// $CR->result_array	= $RES->result_array();
+			$CR->result_array = $RES->result_array();
+			$CR->result_object = (object) $CR->result_array;
 
 			// Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
