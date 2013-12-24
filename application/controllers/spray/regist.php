@@ -4,18 +4,32 @@
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
-
 class Regist extends Spray {
+	/**
+	 * 회원 가입을 위해 입력한 데이터
+	 *
+	 * @var array
+	 */
 	public $post_data;
 
-	function __construct()
+	/**
+	 * 생성자 함수
+	 * 
+	 * 전문의 기본적인 사항을 설정한다.
+	 */
+	public function __construct()
 	{
 		parent::__construct();
 
 		$this->load->model('mysql/member_model');
 	}
 
-	function run()
+	/**
+	 * 전문 실행 : 개발자가 직접 작성
+	 *
+	 * @return array
+	 */
+	public function run()
 	{
 		if($this->validation()) {
 			$this->responseCode = 0;
@@ -27,26 +41,28 @@ class Regist extends Spray {
 		return $this->get_res();
 	}
 
-	function validation()
+	/**
+	 * 전문 실행전 사용자가 입력한 데이터를 검증 한다.
+	 *
+	 * @return boolean
+	 */
+	public function validation()
 	{
 		$ret = FALSE;
 
-		$this->load->library('form_validation');
-
-		// validation 조건 확인
+		// validation 조건 을 설정 한다.
 		$config = array(
 				array( 'field' => 'email', 'label' => 'Email', 'rules' => 'required|valid_email|trim|xss_clean'),
 				array( 'field' => 'password', 'label' => 'Password', 'rules' => 'required'),
 				array( 'field' => 'nickname', 'label' => 'Nickname', 'rules' => 'required')
 		);
 
-		$this->form_validation->set_rules($config);
-
-		if($this->form_validation->run()) {
+		if($this->form_chk($config)) {
 			$this->post_data = array(
 				'email' => $this->input->post('email'),
 				'password' => $this->input->post('password'),
-				'nickname' => $this->input->post('nickname')
+				'nickname' => $this->input->post('nickname'),
+				'auth_date' => date('Y-m-d H:i:s')
 			);
 
 			// 등록된 Email인지 검사 한다.
@@ -57,7 +73,7 @@ class Regist extends Spray {
 				$this->responseCode = 4;
 				$this->responseMessage = '등록된 NickName 입니다.';
 			} else {
-				// debug
+				// test 모듈에서 호출 한 경우 암호를 md5로 변환 한다.
 				$this->post_data['password'] = (
 					  $this->_debug && strlen($this->post_data['password']) < 32
 					? md5($this->post_data['password'])
@@ -66,10 +82,8 @@ class Regist extends Spray {
 
 				$ret = TRUE;
 			}
-
-			return $ret;
 		} else {
-			foreach(explode("\n", strip_tags(validation_errors())) as $err) {
+			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Email')) {
 					$this->responseCode = 3;
 					$err = '올바른 Email 형식이 아님';

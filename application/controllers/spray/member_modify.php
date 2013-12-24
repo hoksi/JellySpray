@@ -6,8 +6,18 @@
  */
 
 class member_modify extends Spray {
+	/**
+	 * 회원 가입을 위해 입력한 데이터
+	 *
+	 * @var array
+	 */
 	public $post_data;
 
+	/**
+	 * 생성자 함수
+	 * 
+	 * 전문의 기본적인 사항을 설정한다.
+	 */
 	function __construct()
 	{
 		parent::__construct();
@@ -15,6 +25,11 @@ class member_modify extends Spray {
 		$this->load->model('mysql/member_model');
 	}
 
+	/**
+	 * 전문 실행 : 개발자가 직접 작성
+	 *
+	 * @return array
+	 */
 	function run()
 	{
 		if($this->validation()) {
@@ -36,20 +51,21 @@ class member_modify extends Spray {
 		return $this->get_res();
 	}
 
+	/**
+	 * 전문 실행전 사용자가 입력한 데이터를 검증 한다.
+	 *
+	 * @return boolean
+	 */
 	function validation()
 	{
 		$ret = FALSE;
-
-		$this->load->library('form_validation');
 
 		// validation 조건 확인
 		$config = array(
 				array( 'field' => 'nickname', 'label' => 'Nickname', 'rules' => 'required')
 		);
 
-		$this->form_validation->set_rules($config);
-
-		if($this->form_validation->run()) {
+		if($this->validation()) {
 			$this->post_data = array(
 				// 'password' => $this->input->post('password'),
 				'nickname' => $this->input->post('nickname')
@@ -63,10 +79,8 @@ class member_modify extends Spray {
 			} else {
 				$ret = TRUE;
 			}
-
-			return $ret;
 		} else {
-			foreach(explode("\n", strip_tags(validation_errors())) as $err) {
+			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Nickname')) {
 					$this->responseCode = 1;
 					$err = 'Nickname 누락';

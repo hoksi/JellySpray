@@ -1,4 +1,3 @@
-<form method="post" onsubmit="return go(this)" id="send" target="_blank">
 <table class="table">
     <thead>
     <tr>
@@ -20,7 +19,7 @@
     <tr>
         <td>password</td>
         <td><input type="text" name="password" value="" id="next" /></td>
-        <td>사용자암호</td>
+        <td>사용자암호(실제 사용시 md5로 암호화 한 값)</td>
     </tr>
 	<tr>
 		<td></td>
@@ -31,20 +30,3 @@
 		<td></td>
 	</tr>
 </table>
-</form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript">
-function go(f) {
-    var next = $('#next').val();
-    var paction = '/spray/<?php echo $command?>/debug/';
-    
-    return send(paction);
-}
-
-function send(url) {
-    $('#send').attr('action', url);
-    $('#send').submit();
-    
-    return false;
-}
-</script>

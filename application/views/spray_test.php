@@ -15,8 +15,12 @@
 			<h4><?=$command?> 전문 테스트</h4>
 		</div>
 		<div class="row well">
-			<?php $this->load->view('spray/' . $command);?>
+			<form method="post" action="/<?php echo $spray_dir?>/<?php echo $command?>/debug/<?php echo $auth?>" id="send" target="_blank">
+			<?php $this->load->view($spray_dir . '/' . $command);?>
+			</form>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 </body>
 </html>

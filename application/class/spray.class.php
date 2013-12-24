@@ -5,7 +5,7 @@
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
-class Spray extends CI_Controller {
+abstract class Spray extends CI_Controller {
 	/**
 	 * Debug 상태 여부 확인
 	 *
@@ -85,6 +85,9 @@ class Spray extends CI_Controller {
 		// 환경 파일 load
 		$this->config->load('spray');
 		
+		// 필수 라이브러리 등록
+		$this->load->library('form_validation');
+		
 		// Session 처리용 모델
 		$this->load->model('mysql/session_model');
 
@@ -120,12 +123,17 @@ class Spray extends CI_Controller {
 
 	/**
 	 * 전문 테스트
-	 * @param String $auth
 	 */
-	public function test($auth = NULL)
+	public function test()
 	{
 		if(in_array($this->router->fetch_class(), $this->public_cmd) !== FALSE || $this->session_model->exists_session_id($this->_auth_key)) {
-			$this->load->view('spray_test', array('command' => $this->router->fetch_class(), 'auth' => $auth));
+			$params = array(
+				'spray_dir' => $this->uri->segment(1),
+				'command' => $this->router->fetch_class(), 
+				'auth' => $this->_auth_key
+			);
+			
+			$this->load->view('spray_test', $params);
 		} else {
 			echo "<a href='/spray/login/test'>Login first!! - Click me</a>";
 		}
@@ -204,22 +212,29 @@ class Spray extends CI_Controller {
 		else show_404();
 	}
 
-	function run()
-	{
-		if($this->validation()) {
-			return $this->get_res();
-		}
-	}
+	/**
+	 * 전문을 실행 한다.
+	 * 개발자가 실제 구현해야 하는 부분
+	 */
+	public function run() {}
 
-	function validation()
+	/**
+	 * 전문을 실행하기전 사용자가 입력한 값을 검증 한다.
+	 * 개발자가 실제 구현해야 하는 부분
+	 *
+	 * @return void
+	 */
+	public function validation()
 	{
 		return TRUE;
 	}
 
-/*
- * Utility 함수
- */
-	function get_res($data = NULL)
+	/**
+	 * 전문 형식에 맞추어 결과 값을 리턴 한다.
+	 *
+	 * @return array
+	 */
+	protected function get_res()
 	{
 		return array(
 			'responseCode' => $this->responseCode,
@@ -229,7 +244,12 @@ class Spray extends CI_Controller {
 		);
 	}
 
-    function is_valid_auth()
+	/**
+	 * 만료된 세션키인지 호가인 한다.
+	 *
+	 * @return boolean
+	 */
+    protected function is_valid_auth()
     {
     	$ret = isset($this->bu_session['session_id']) && $this->bu_session['session_id'] == $this->_auth_key;
 		if(!$ret) {
@@ -239,8 +259,32 @@ class Spray extends CI_Controller {
         return $ret;
     }
 
-	function get_param($idx)
+	/**
+	 * $this->_params 배열에서 idx에 해당 하는 값을 반환 한다.
+	 *
+	 * @return string or NULL
+	 */
+	protected function get_param($idx)
 	{
 		return isset($this->_params[$idx]) ? $this->_params[$idx] : NULL;
 	}
+	
+	/**
+	 * 입력된 사용자 값을 확인 한다.
+	 *
+	 * @return void
+	 */
+	protected function form_chk($config) {
+		$this->form_validation->set_rules($config);
+		return $this->form_validation->run();
+	}
+
+	/**
+	 * 사용자 값 검증 후 에러를 검증 한다.
+	 *
+	 * @return array
+	 */
+	function error_chk() {
+		return explode("\n", strip_tags(validation_errors()));
+	}	
 }

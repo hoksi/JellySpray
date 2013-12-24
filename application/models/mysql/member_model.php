@@ -36,7 +36,7 @@ class Member_model extends MY_Model {
 	{
 		return $this->set_table($this->table)
 					->set_where('email', $email)
-					->set_select('member_id, password, nickname')
+					->set_select('member_id, password, nickname, auth_date')
 					->get_one();
 	}
 

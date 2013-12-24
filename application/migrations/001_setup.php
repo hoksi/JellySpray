@@ -39,6 +39,7 @@ class Migration_Setup extends CI_Migration {
 				  `point` int(11) NOT NULL DEFAULT '0' COMMENT '포인트',
 				  `mileage` int(11) NOT NULL DEFAULT '0' COMMENT '마일리지',
 				  `level` int(1) NOT NULL DEFAULT '1' COMMENT '레벨',
+				  `auth_date` datetime NOT NULL COMMENT '인증키발급일',
 				  `reg_date` datetime NOT NULL COMMENT '등록일',
 				  PRIMARY KEY (`member_id`),
 				  KEY `email_idx` (`email`),

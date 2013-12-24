@@ -6,16 +6,31 @@
  */
 
 class Login extends Spray {
+	/**
+	 * 회원 가입을 위해 입력한 데이터
+	 *
+	 * @var array
+	 */
 	public $post_data;
 
-	function __construct()
+	/**
+	 * 생성자 함수
+	 * 
+	 * 전문의 기본적인 사항을 설정한다.
+	 */
+	public function __construct()
 	{
 		parent::__construct();
 
 		$this->load->model('mysql/member_model');
 	}
 
-	function run()
+	/**
+	 * 전문 실행 : 개발자가 직접 작성
+	 *
+	 * @return array
+	 */
+	public function run()
 	{
 		if($this->validation()) {
 			$row = $this->member_model->get_id_password($this->post_data['email']);
@@ -26,7 +41,7 @@ class Login extends Spray {
 				
 				$this->member_model->update_last_login($row['member_id']);
 
-				$session_id = md5($row['password'] . $row['member_id']);
+				$session_id = md5($row['password'] . $row['member_id'] . $row['auth_date']);
 				$data = array(
 					'member_id' => $row['member_id'],
 					'email' => $this->post_data['email'],
@@ -49,11 +64,14 @@ class Login extends Spray {
 		return $this->get_res();
 	}
 
-	function validation()
+	/**
+	 * 전문 실행전 사용자가 입력한 데이터를 검증 한다.
+	 *
+	 * @return boolean
+	 */
+	public function validation()
 	{
 		$ret = FALSE;
-
-		$this->load->library('form_validation');
 
 		// validation 조건 확인
 		$config = array(
@@ -61,9 +79,7 @@ class Login extends Spray {
 				array( 'field' => 'password', 'label' => 'Password', 'rules' => 'required')
 		);
 
-		$this->form_validation->set_rules($config);
-
-		if($this->form_validation->run()) {
+		if($this->form_chk($config)) {
 			$this->post_data = array(
 				'email' => $this->input->post('email'),
 				'password' => $this->input->post('password')
@@ -77,10 +93,8 @@ class Login extends Spray {
 			);
 
 			$ret = TRUE;
-
-			return $ret;
 		} else {
-			foreach(explode("\n", strip_tags(validation_errors())) as $err) {
+			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Email')) {
 					$this->responseCode = 3;
 					$err = '올바른 Email 형식이 아님';
