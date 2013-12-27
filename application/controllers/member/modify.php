@@ -5,7 +5,7 @@
  * @author		한대승 <hoksi2k@hanmail.net>
  */
 
-class member_modify extends Spray {
+class modify extends Spray {
 	/**
 	 * 회원 가입을 위해 입력한 데이터
 	 *

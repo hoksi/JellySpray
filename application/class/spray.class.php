@@ -110,7 +110,7 @@ abstract class Spray extends CI_Controller {
 	 */
 	public function _remap($method, $params=array())
 	{
-		$cmd = array('debug', 'json', 'xml', 'test');
+		$cmd = $this->config->item('return_method');
 		$method = strtolower($method);
 		if(in_array($method, $cmd) !== FALSE) {
 			$this->_auth_key = array_shift($params);
