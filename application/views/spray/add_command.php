@@ -9,20 +9,19 @@
 		    </tr>
 		    </thead>
 		    <tr>
-		        <td>Email</td>
-		        <td><input type="text" name="email" value="" id="email" /></td>
-		        <td>관리자 Email</td>
+		        <td>Group name</td>
+		        <td><?php echo $segment[0]?></td>
+		        <td>대상 전문 그룹 이름</td>
 		    </tr>
 		    <tr>
-		        <td>password</td>
-		        <td><input type="password" name="passwd" value="" id="passwd" /></td>
-		        <td>관리자암호</td>
+		        <td>New command name</td>
+		        <td><input type="text" name="command_name" value="<?php echo $data['command_name']?>" id="command_name" /></td>
+		        <td>새 전문 이름</td>
 		    </tr>
 			<tr>
 				<td></td>
 				<td>
-					<input type="submit" value="Login" />
-					<input type="reset" />
+					<input type="submit" value="Add" />
 				</td>
 				<td></td>
 			</tr>
@@ -30,7 +29,7 @@
 	</form>	
 	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
 <?php else: ?>
-	<script>
-		document.location.replace('/spray/cmd_list');
-	</script>
+<script>
+	document.location.replace('/spray/cmd_list/<?php echo isset($segment[0]) ? $segment[0] : ''?>');
+</script>
 <?php endif; ?>	

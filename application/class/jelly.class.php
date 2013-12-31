@@ -115,7 +115,7 @@ abstract class Jelly extends CI_Controller {
 
 		// 인증키 생성
 		session_start();
-		$this->_auth_key = session_id();
+		$this->_auth_key = md5(session_id() . $this->config->item('auth_session_key'));
 
 		// 환경 파일 load
 		$this->config->load('jelly');
@@ -183,6 +183,8 @@ abstract class Jelly extends CI_Controller {
 		if($this->_auth_key != NULL && $this->session_model->exists_session_id($this->_auth_key)) {
 			// 로그인 한 사용자의 정보를 가져온다.
 			$this->bu_session = $this->session_model->get_userdata($this->_auth_key);
+			// 세션 시간 만료 확인
+			$this->is_valid_auth();
 		} elseif(in_array($this->router->fetch_class(), $this->public_cmd) === FALSE) {
 			// 로그인이 필요한 전문인 경우 로그인 요청을 한다.
 			$this->responseCode = 9997;
@@ -192,7 +194,9 @@ abstract class Jelly extends CI_Controller {
 		// 전문 실행
 		$_data = $this->responseCode == 0 ? call_user_func_array(array($this, 'run'), $this->_params) : $this->get_res();
 
-		if($this->_debug) {
+		if($this->responseCode == 9997 || $this->responseCode == 9996) {
+			redirect($this->config->item('default_login_url') ? $this->config->item('default_login_url') : '/spray/login');
+		} elseif($this->_debug) {
 			$this->output->enable_profiler(TRUE);
 			$_data['_debug'] = $this->_debug;
 			$this->load->view('spray', $_data);
@@ -255,11 +259,14 @@ abstract class Jelly extends CI_Controller {
 	 */
     protected function is_valid_auth()
     {
-    	$ret = isset($this->bu_session['session_id']) && $this->bu_session['session_id'] == $this->_auth_key;
-		if(!$ret) {
+    	$ret = FALSE;
+		if((time() - $this->bu_session['last_activity']) > $this->config->item('alive_session_time')) {
 			$this->responseCode = 9996;
 			$this->responseMessage = '세션이 만료 되었습니다.';
+		} else {
+			$this->session_model->update_last_activity($this->bu_session['session_id']);
 		}
+		
         return $ret;
     }
 

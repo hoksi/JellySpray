@@ -1,6 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * 전문을 추가 합니다.
+ * 새로운 전문을 만든다.
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
@@ -18,43 +18,50 @@ class Add_command extends Jelly {
 	
 	public function run($group = NULL)
 	{
-		if($this->validation()) {
-			if($this->spray_commands_model->add_group($this->post_data['group_name'])) {
+		if($this->validation($group)) {
+			if($this->spray_commands_model->add_command($group, $this->post_data['command_name'])) {
 				$this->responseCode = 0;
-				$this->responseMessage = 'Add group success';
+				$this->responseMessage = 'Add command success';
 			} else {
-				$this->responseCode = 3;
-				$this->responseMessage = '이미 존재하는 그룹 입니다.';
+				$this->responseCode = 4;
+				$this->responseMessage = '이미 존재하는 전문 입니다.';
 			}
 		}
+		
+		$this->data = array('command_name' => $this->input->post('command_name'));
 		
 		return $this->get_res();
 	}
 	
-	public function validation()
+	public function validation($group)
 	{
 		$ret = FALSE;
 
 		// validation 조건 확인
 		$config = array(
-				array( 'field' => 'group_name', 'label' => 'GroupName', 'rules' => 'required|xss_clean')
+				array( 'field' => 'command_name', 'label' => 'CommandName', 'rules' => 'required|xss_clean')
 		);
 
 		if($this->form_chk($config)) {
-			$this->post_data = array(
-				'group_name' => $this->input->post('group_name')
-			);
-
-			$ret = TRUE;
+			if($group) {
+				$this->post_data = array(
+					'command_name' => $this->input->post('command_name')
+				);
+	
+				$ret = TRUE;
+			} else {
+				$this->responseCode = 3;
+				$this->responseMessage = '전문을 추가할 그룹명 누락';
+			}
 		} else {
 			foreach($this->error_chk() as $err) {
-				if(strstr($err, 'GroupName')) {
+				if(strstr($err, 'CommandName')) {
 					$this->responseCode = 2;
-					$err = '신규 그룹이름을 입력하세요.';
+					$err = '새로운 전문이름을 입력하세요.';
 					break;
 				} else {
 					$this->responseCode = 1;
-					$err = '신규 그룹을 생성 합니다.';
+					$err = '새로운 전문을 추가 합니다.';
 				}
 			}
 

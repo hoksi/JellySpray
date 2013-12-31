@@ -15,7 +15,7 @@
 <?php else:?>
 	<tr>
 <?php endif ?>
-		<td class="spray_group" data-value="<?php echo $group['name'];?>" style="cursor:pointer"><?php echo $group['name'] . '(' . $group['len'] . ')'; ?></td>
+		<td><a class="btn btn-link" href="<?php echo $self;?>/<?php echo $group['name']?>"><?php echo $group['name'] . '(' . $group['len'] . ')'; ?></a></td>
 		<td></td>
 		<td></td>
 		<td></td>
@@ -41,31 +41,24 @@
 <?php endforeach; ?>
 </table>
 <script>
-	$(function(){
-		$('.spray_group').click(function(evt) {
-			var group_name = $(this).attr('data-value');
-			document.location.replace('<?php echo $self;?>/' + group_name);
-		});
-	});
-	
 	function delete_group(group_name)
 	{
 		if(confirm('[' + group_name + '] 그룹을 삭제 하시겠습니까?')) {
-			document.location.replace('<?php echo $base_url?>/delete_group/' + group_name);
+			document.location.href = '<?php echo $base_url?>/delete_group/' + group_name;
 		}
 	}
 
 	function rename_group(group_name)
 	{
 		if(confirm('[' + group_name + '] 그룹명을 변경 하시겠습니까?')) {
-			document.location.replace('<?php echo $base_url?>/rename_group/' + group_name);
+			document.location.href = '<?php echo $base_url?>/rename_group/' + group_name;
 		}
 	}
 
 	function add_command(group_name)
 	{
 		if(confirm('[' + group_name + '] 그룹에 전문을 추가 하시겠습니까?')) {
-			document.location.replace('<?php echo $base_url?>/add_command/' + group_name);
+			document.location.href = '<?php echo $base_url?>/add_command/' + group_name;
 		}
 	}
 </script>

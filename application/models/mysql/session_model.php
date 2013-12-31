@@ -45,6 +45,9 @@ class Session_model extends MY_Model {
 		
 		if(isset($row['user_data']) && !empty($row['user_data'])) {
 			$user_data = unserialize($row['user_data']);
+			$user_data['last_activity'] = $row['last_activity'];
+			$user_data['session_id'] = $session_id;
+			
 			if($key != NULL) {
 				$ret = isset($user_data[$key]) ? $user_data[$key] : NULL;
 			} else {
@@ -55,6 +58,14 @@ class Session_model extends MY_Model {
 		return $ret;
 	}
 
+	public function update_last_activity($session_id)
+	{
+		return $this->set_table($this->table)
+			->set_data('last_activity', time())
+			->set_where('session_id', $session_id)
+			->update();
+	}
+	
 	public function delete_session($session_id)
 	{
 		return $this->set_table($this->table)

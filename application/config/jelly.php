@@ -6,6 +6,24 @@
  */
 $config['public_cmd'] = array('test', 'welcome', 'login');
 /**
+ * 세션키를 암호화 할 문자열
+ *
+ * @var array
+ */
+$config['auth_session_key'] = 'd96e825b94954c495a715fddc9c7f58a';
+/**
+ * 세션키를 유효 시간
+ *
+ * @var int
+ */
+$config['alive_session_time'] = 600; // 10분
+/**
+ * 인증을 거치지 않은 경우 사용할 URL
+ *
+ * @var string
+ */
+$config['default_login_url'] = '/spray/login';
+/**
  * 디버그시 사용할 get 변수 이름
  *
  * @var string
