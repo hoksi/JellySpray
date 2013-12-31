@@ -1,13 +1,6 @@
 <?php if($responseCode != 0): ?>
 	<form method="post" role="form" class="form-horizontal">
-		<table class="table table-bordered">
-		    <thead>
-		    <tr>
-		        <th class="span2">Field</th>
-		        <th></th>
-		        <th></th>
-		    </tr>
-		    </thead>
+		<table id="command" class="table table-bordered">
 		    <tr>
 		        <td>Group name</td>
 		        <td><?php echo $segment[0]?></td>
@@ -25,6 +18,21 @@
 				</td>
 				<td></td>
 			</tr>
+		    <tr>
+		        <th>Field name</th>
+		        <th>Field Option</th>
+		        <th>Action</th>
+		    </tr>
+		    <tr class="item1">
+		        <td><input type="text" name="field_name[item1]"></td>
+		        <td>
+		        	<input type="checkbox" checked="checked" value="required" name="option[item1][]" /> required :: 
+					<input type="checkbox" checked="checked" value="trim" name="rules[password][]" /> trim :: 
+					<input type="checkbox" value="valid_email" name="rules[password][]" /> email :: 
+					<input type="checkbox" checked="checked" value="xss_clean" name="rules[password][]" /> xss_clean ::
+				</td>
+		        <th></th>
+		    </tr>
 		</table>
 	</form>	
 	<div class="alert alert-warning"><?php echo $responseMessage;?></div>

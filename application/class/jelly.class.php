@@ -195,7 +195,9 @@ abstract class Jelly extends CI_Controller {
 		$_data = $this->responseCode == 0 ? call_user_func_array(array($this, 'run'), $this->_params) : $this->get_res();
 
 		if($this->responseCode == 9997 || $this->responseCode == 9996) {
-			redirect($this->config->item('default_login_url') ? $this->config->item('default_login_url') : '/spray/login');
+			$this->load->view($this->default_header_file, $_data);
+			$this->load->view($this->config->item('default_login_view') ? $this->config->item('default_login_view') : '/spray/login', $_data);
+			$this->load->view($this->default_footer_file, $_data);
 		} elseif($this->_debug) {
 			$this->output->enable_profiler(TRUE);
 			$_data['_debug'] = $this->_debug;
@@ -260,11 +262,13 @@ abstract class Jelly extends CI_Controller {
     protected function is_valid_auth()
     {
     	$ret = FALSE;
+
 		if((time() - $this->bu_session['last_activity']) > $this->config->item('alive_session_time')) {
 			$this->responseCode = 9996;
 			$this->responseMessage = '세션이 만료 되었습니다.';
+			$this->session_model->delete_session($this->_auth_key);
 		} else {
-			$this->session_model->update_last_activity($this->bu_session['session_id']);
+			$this->session_model->update_last_activity($this->_auth_key);
 		}
 		
         return $ret;

@@ -1,5 +1,5 @@
 <?php if($responseCode != 0): ?>
-	<form method="post" role="form" class="form-horizontal">
+	<form action="<?php echo config_item('default_login_url')?>" method="post" role="form" class="form-horizontal">
 		<table class="table table-bordered">
 		    <thead>
 		    <tr>

@@ -18,11 +18,17 @@ $config['auth_session_key'] = 'd96e825b94954c495a715fddc9c7f58a';
  */
 $config['alive_session_time'] = 600; // 10분
 /**
- * 인증을 거치지 않은 경우 사용할 URL
+ * 인증을 거치지 않은 경우 사용할 login URL
  *
  * @var string
  */
 $config['default_login_url'] = '/spray/login';
+/**
+ * 인증을 거치지 않은 경우 사용할 login URL
+ *
+ * @var string
+ */
+$config['default_login_view'] = 'spray/login';
 /**
  * 디버그시 사용할 get 변수 이름
  *
