@@ -14,7 +14,10 @@ class Spray_commands_model extends MY_Model {
 		$this->load->helper('directory');
 		
 		$this->spray_dir = APPPATH . 'controllers/';
-		$this->spray_cmd_list = $this->_get_command_group_and_command();
+		$this->spray_view_dir = APPPATH . 'views/';
+		$this->spray_model_dir = APPPATH . 'models/'; 
+		
+		$this->spray_cmd_list = $this->_get_group_and_command();
 	}
 	
 	public function get_spray_groups($group = NULL)
@@ -33,7 +36,115 @@ class Spray_commands_model extends MY_Model {
 		return array_key_exists($group, $this->spray_cmd_list) ? $this->spray_cmd_list[$group]['command'] : NULL;
 	}
 	
-	private function _get_command_group_and_command()
+	public function add_group($group_name)
+	{
+		$ret = FALSE;
+		
+		if(!$this->_exists_group($group_name)) {
+			// Controller group
+			$group = $this->spray_dir . $group_name;
+			$ret = @mkdir($group);
+
+			// Model group
+			$group = $this->spray_model_dir . $group_name;
+			$ret = @mkdir($group);
+
+			// View group
+			$group = $this->spray_view_dir . $group_name;
+			$ret = $ret && @mkdir($group);
+		}
+		
+		return $ret;
+	}
+	
+	public function rename_group($org_group_name, $new_group_name)
+	{
+		$ret = FALSE;
+		
+		if($this->_exists_group($org_group_name)) {
+			// Controller group
+			$group = $this->spray_dir . $org_group_name;
+			$new_group = $this->spray_dir . $new_group_name;
+			$ret = @rename($group, $new_group);
+
+			// Model group
+			$group = $this->spray_model_dir . $org_group_name;
+			$new_group = $this->spray_model_dir . $new_group_name;
+			$ret = @rename($group, $new_group);
+			
+			// View group
+			$group = $this->spray_view_dir . $org_group_name;
+			$new_group = $this->spray_view_dir . $new_group_name;
+			$ret = $ret && @rename($group, $new_group);
+		}
+		
+		return $ret;
+	}
+	
+	public function delete_group($group_name, $remove_all = FALSE)
+	{
+		$ret = FALSE;
+		
+		if($this->_exists_group($group_name)) {
+			// Controller group
+			$group = $this->spray_dir . $group_name;
+			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
+
+			// Model group
+			$group = $this->spray_model_dir . $group_name;
+			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
+
+			// View group
+			$group = $this->spray_view_dir . $group_name;
+			$ret = $ret && ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
+		}
+		
+		return $ret;
+	}
+	
+	public function add_command($group_name, $command_name)
+	{
+		$ret = FALSE;
+		
+		$finfo = explode('.', $command_name);
+		$command_name = $finfo[0];
+		if($command_name != NULL && !$this->_exists_command($group_name, $command_name)) {
+			$command = $this->spray_dir . $group_name . '/' . $command_name . '.php';
+			$ret = @touch($command);
+			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
+			$ret = @touch($command);
+		}
+		
+		return $ret;
+	}
+
+	private function _exists_group($group_name)
+	{
+		return file_exists($this->spray_dir . $group_name) 
+			   && is_dir($this->spray_dir . $group_name)
+			   && file_exists($this->spray_model_dir . $group_name) 
+			   && is_dir($this->spray_model_dir . $group_name)
+			   && file_exists($this->spray_view_dir . $group_name)
+			   && is_dir($this->spray_view_dir . $group_name);
+	}
+	
+	private function _exists_command($group_name, $command)
+	{
+		return file_exists($this->spray_dir . $group_name . '/' . $command) 
+			   && file_exists($this->spray_view_dir . $group_name . '/' . $command);
+	}
+	
+	private function _remove_all($dir)
+	{
+		$files = array_diff(scandir($dir), array('.','..'));
+		foreach ($files as $file) {
+			(is_dir("{$dir}/{$file}")) ? $this->_remove_all("{$dir}/{$file}") : unlink("{$dir}/{$file}");
+	    } 
+		
+	    return @rmdir($dir); 
+	}
+	
+	private function _get_group_and_command()
 	{
 		$no_spray_groups = $this->config->item('no_spray_groups');
 		$map = directory_map($this->spray_dir);
@@ -44,7 +155,7 @@ class Spray_commands_model extends MY_Model {
 				$cmd_list[$group] = array('len' => 0, 'command' => array());
 				foreach($command as $cmd_file) {
 					$file_info = pathinfo($cmd_file);
-					if($file_info['extension'] == 'php' && $this->_is_spray_command($group, $file_info['filename'])) {
+					if(isset($file_info['extension']) && $file_info['extension'] == 'php' && $this->_is_spray_command($group, $file_info['filename'])) {
 						$cmd_list[$group]['command'][] = $file_info['filename'];
 					}
 					$cmd_list[$group]['len'] = count($cmd_list[$group]['command']);

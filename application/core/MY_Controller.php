@@ -5,6 +5,11 @@
 include_once APPPATH . 'class/spray.class.php';
 
 /**
+ * Spray Class include 
+ */
+include_once APPPATH . 'class/jelly.class.php';
+
+/**
  * Toast Class include 
  */
 include_once APPPATH . 'class/toast.class.php';

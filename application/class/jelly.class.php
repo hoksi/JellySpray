@@ -1,11 +1,10 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * 전문 처리기
- * json, xml 반환
+ * 웹페이지 처리기
  *
  * @author		한대승 <hoksi2k@hanmail.net>
  */
-abstract class Spray extends CI_Controller {
+abstract class Jelly extends CI_Controller {
 	/**
 	 * Debug 상태 여부 확인
 	 *
@@ -68,10 +67,45 @@ abstract class Spray extends CI_Controller {
 	 * @var array
 	 */
 	private $public_cmd;
+	
+	/**
+	 * Default view file name
+	 * 
+	 * @var string
+	 */
+	public $default_view_file;	 
 
 	/**
+	 * Default header view file name
+	 * 
+	 * @var string
+	 */
+	public $default_header_file;
+
+	/**
+	 * Default footer view file name
+	 * 
+	 * @var string
+	 */
+	public $default_footer_file;
+	
+	/**
+	 * Base_url
+	 *
+	 * @var string
+	 */
+	public $base_url;
+	
+	/**
+	 * Self url
+	 *
+	 * @var string
+	 */
+	public $self;
+	
+	/**
 	 * 생성자
-	 * 스프레이를 초기화 한다. 
+	 * 젤리를 초기화 한다. 
 	 *
 	 * @return void
 	 */
@@ -80,22 +114,36 @@ abstract class Spray extends CI_Controller {
 		parent::__construct();
 
 		// 인증키 생성
-		// session_start();
+		session_start();
+		$this->_auth_key = session_id();
 
 		// 환경 파일 load
-		$this->config->load('spray');
+		$this->config->load('jelly');
 		
 		// 필수 라이브러리 등록
 		$this->load->library('form_validation');
 		
 		// Session 처리용 모델
 		$this->load->model('mysql/session_model');
+		
+		// Debug mode
+		$this->_debug = isset($_GET[$this->config->item('debug_get_var_name')]) ? TRUE : FALSE;
+		
+		// Base URL 
+		$this->base_url = '/' . $this->uri->segment(1);
+		$this->self = $this->base_url . '/' . $this->router->fetch_class();
+				
+		// Default view file
+		$this->default_view_file = $this->uri->segment(1) . '/' . $this->router->fetch_class();
+		$this->default_header_file = $this->uri->segment(1) . '/' . $this->config->item('default_header');
+		$this->default_footer_file = $this->uri->segment(1) . '/' . $this->config->item('default_footer');
 
 		// 캐시 삭제용 헤더
-		$this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate");
-		$this->output->set_header("Cache-Control: post-check=0, pre-check=0");
-		$this->output->set_header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		$this->output->set_header("Pragma: no-cache");
+
+		// $this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate");
+		// $this->output->set_header("Cache-Control: post-check=0, pre-check=0");
+		// $this->output->set_header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		// $this->output->set_header("Pragma: no-cache");*/
 
 		$this->data = array();
 		$this->public_cmd = $this->config->item('public_cmd');
@@ -108,86 +156,25 @@ abstract class Spray extends CI_Controller {
 	 * @param array $params
 	 * @return void
 	 */
-	public function _remap($method, $params=array())
+	public function _remap($param , $params=array())
 	{
-		$cmd = $this->config->item('return_method');
-		$method = strtolower($method);
-		if(in_array($method, $cmd) !== FALSE) {
-			$this->_auth_key = array_shift($params);
-			$this->_params = $params;
-			$this->$method();
-		}else {
-			show_404();
-		}
-	}
-
-	/**
-	 * 전문 테스트
-	 */
-	public function test()
-	{
-		if(in_array($this->router->fetch_class(), $this->public_cmd) !== FALSE || $this->session_model->exists_session_id($this->_auth_key)) {
-			$params = array(
-				'spray_dir' => $this->uri->segment(1),
-				'command' => $this->router->fetch_class(), 
-				'auth' => $this->_auth_key
-			);
-			
-			$this->load->view('spray_test', $params);
-		} else {
-			echo "<a href='/member/login/test'>Login first!! - Click me</a>";
-		}
-	}
-
-
-	/**
-	 * 전문 Debug
-	 */
-	public function debug()
-	{
-		$this->output->set_profiler_sections(array('config'  => TRUE, 'queries' => TRUE));
-		$this->output->enable_profiler(TRUE);
-		$this->_debug = TRUE;
-		$this->_mode = 'XML';
-
-		$this->_request();
-	}
-
-	/**
-	 * XML형식으로 출력
-	 */
-	public function xml()
-	{
-		$this->output->set_header('Content-type: text/xml; charset=UTF-8');
-		$this->output->append_output('<?xml version="1.0" encoding="UTF-8"?>');
-
-		$this->_mode = 'XML';
-		$this->_request();
-	}
-
-	/**
-	 * JSON형식으로 출력
-	 */
-	public function json()
-	{
-		$this->output->set_content_type('application/json');
-
-		$this->_mode = 'JSON';
-		$this->_request();
-	}
-
-	/**
-	 * 요청에 해당하는 전문을 처리후 적절한 방식에 따라 출력
-	 */
-	private function _request()
-	{
+		// 파라미터
+		$this->_params = array_merge(array($param != 'index' ? $param : NULL), $params);
+		
 		// POST로 전송된 값 Debug 하기 위해 Log로 남긴다.
 		if($this->config->item('log_threshold')) {
 			$this->load->library('user_agent');
 
-			$post_debug = '';
-			if($this->input->post()) foreach($this->input->post() as $key => $val)	$post_debug .= "`{$key} => {$val}` ";
-			else $post_debug = $this->uri->uri_string();
+			// 디버그
+			if($this->input->post()) {
+				$post_debug = 'POST ';
+				foreach($this->input->post() as $key => $val)	$post_debug .= "`{$key} => {$val}` ";
+			} elseif($this->input->get()) {
+				$post_debug = 'GET ';
+				foreach($this->input->get() as $key => $val)	$post_debug .= "`{$key} => {$val}` ";
+			} else {
+				$post_debug = $this->uri->uri_string();
+			}
 
 			log_message('error', $this->input->server('REMOTE_ADDR') . '-' . $this->agent->agent_string() . '-' .$this->router->fetch_class(). ' : ' . $post_debug);
 		}
@@ -204,12 +191,16 @@ abstract class Spray extends CI_Controller {
 
 		// 전문 실행
 		$_data = $this->responseCode == 0 ? call_user_func_array(array($this, 'run'), $this->_params) : $this->get_res();
-		$_data['_debug'] = $this->_debug;
 
-		if($this->_mode == 'JSON') {
-			$this->output->append_output(json_encode($_data));
-		} elseif($this->_mode == 'XML') $this->load->view('spray', $_data);
-		else show_404();
+		if($this->_debug) {
+			$this->output->enable_profiler(TRUE);
+			$_data['_debug'] = $this->_debug;
+			$this->load->view('spray', $_data);
+		} else {
+			$this->load->view($this->default_header_file, $_data);
+			$this->load->view($this->default_view_file, $_data);
+			$this->load->view($this->default_footer_file, $_data);
+		}
 	}
 
 	/**
@@ -219,7 +210,10 @@ abstract class Spray extends CI_Controller {
 	public function run() {
 		if($this->validation()) {
 			$this->responseCode = 0;
-			$this->responseMessage = 'Spray install success';
+			$this->responseMessage = 'Jelly install success';
+		} else {
+			$this->responseCode = 9996;
+			$this->responseMessage = 'Jelly error message';
 		}
 
 		return $this->get_res();
@@ -247,12 +241,15 @@ abstract class Spray extends CI_Controller {
 			'responseCode' => $this->responseCode,
 			'responseMessage' => $this->responseMessage,
 			'transactionDate' => date('YmdHis'),
+			'self' => $this->self,
+			'base_url' => $this->base_url,
+			'segment' => $this->_params,
 			'data' => $this->data
 		);
 	}
 
 	/**
-	 * 만료된 세션키인지 호가인 한다.
+	 * 만료된 세션키인지 확인 한다.
 	 *
 	 * @return boolean
 	 */

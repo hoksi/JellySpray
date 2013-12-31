@@ -38,5 +38,5 @@ class Setup extends CI_Controller {
 	}
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+/* End of file setup.php */
+/* Location: ./application/controllers/setup.php */

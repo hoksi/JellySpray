@@ -5,7 +5,7 @@
  * @author		한대승 <hoksi2k@hanmail.net>
  */
 
-class Welcome extends CI_Controller {
+class Cmd_list extends Jelly {
 	public function __construct()
 	{
 		parent::__construct();
@@ -14,12 +14,21 @@ class Welcome extends CI_Controller {
 		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
 	}
 	
-	public function index($group = NULL)
+	public function run($group = NULL)
 	{
-		$data = array(
-			'groups' => $this->spray_commands_model->get_spray_groups($group)
-		);
+		if($this->validation()) {
+			$this->responseCode = 0;
+			$this->responseMessage = 'Spry file list';
+			$this->data = array(
+				'groups' => $this->spray_commands_model->get_spray_groups($group)
+			);
+		}
 		
-		$this->load->view('spray/welcome', $data);
+		return $this->get_res();
+	}
+	
+	public function validation()
+	{
+		return TRUE;
 	}
 }
