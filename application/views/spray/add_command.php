@@ -1,5 +1,6 @@
 <?php if($responseCode != 0): ?>
-	<form method="post" role="form" class="form-horizontal">
+	<form method="post" role="form" class="form-horizontal" id="add_command_form">
+		<input type="hidden" name="item_len" value="0" id="item_len"/>
 		<table id="command" class="table table-bordered">
 		    <tr>
 		        <td>Group name</td>
@@ -14,8 +15,9 @@
 			<tr>
 				<td></td>
 				<td>
-					<input type="submit" value="Add" />
-					<input type="button" value="Field add" id="addFieldBtn" />
+					<input type="submit" value="Add" class="btn btn-primary" />
+					<input type="button" value="Field add" class="btn btn-info" id="addFieldBtn" />
+					<a href="/spray/cmd_list/<?php echo $segment[0]?>" class="btn btn-default">Back</a>
 				</td>
 				<td></td>
 			</tr>
@@ -32,10 +34,11 @@
 		    <tr class="itemx">
 		        <td><input type="text" name="itemx"></td>
 		        <td>
-		        	<input type="checkbox" value="required" name="itemx_required" /> required :: 
-					<input type="checkbox" value="trim" name="itemx_trim" /> trim :: 
-					<input type="checkbox" value="valid_email" name="itemx_email" /> email :: 
-					<input type="checkbox" value="xss_clean" name="itemx_xss" /> xss_clean ::
+		        	<input type="checkbox" value="required" name="itemx_opt1" checked="checked" /> required :: 
+					<input type="checkbox" value="trim" name="itemx_opt2" checked="checked" /> trim :: 
+					<input type="checkbox" value="valid_email" name="itemx_opt3" /> email :: 
+					<input type="checkbox" value="xss_clean" name="itemx_opt4" checked="checked" /> xss_clean<br/>
+					Error message : <input type="input" name="itemx_errmsg" size="30" />
 				</td>
 		        <td>
 		        	<button class="delBtn" type="button">삭제</button>
@@ -54,20 +57,32 @@
                 newitem.find("input").each(function(data) {
                 	var new_name = $(this).attr('name');
                 	if(new_name) {
-                		new_name = new_name.replace("itemx", newitem_name)
-	                	if(new_name == newitem_name) {
-	                		$(this).val('');
-	                	}
-	                	$(this).attr('name', new_name).attr('checked', false);
+	                	$(this).attr('name', new_name.replace("itemx", newitem_name));
                 	}
                 });
                 newitem.addClass(newitem_name);
  
                 $("#command").append(newitem);
+                $("#item_len").val(parseInt(lastItemNo)+1);
             });
             
 			$("#command").on("click", ".delBtn", function(){
+                var currentItemNo = $(this).parent().parent().attr("class").replace("item", "");
+                var lastItemNo = $("#command tr:last").attr("class").replace("item", "");
                 $(this).parent().parent().remove();
+                for(var i=currentItemNo + 1; i < lastItemNo; i++) {
+                	var itemName = "item" + i;
+                }
+            });
+            
+            $('#add_command_form').submit(function() {
+            	if($('#command_name').val() == '') {
+            		alert('Command 이름을 입력해 주십시오.');
+            		$('#command_name').focus();
+            		return false;
+            	} else {
+            		return true;
+            	}
             });
 		});
 	</script>

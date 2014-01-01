@@ -19,7 +19,7 @@ class Add_group extends Jelly {
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			if($this->spray_commands_model->add_group($this->post_data['group_name'])) {
+			if($this->spray_commands_model->add_group($this->post_data['group_name'], $this->post_data['model_create'])) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add group success';
 			} else {
@@ -42,7 +42,8 @@ class Add_group extends Jelly {
 
 		if($this->form_chk($config)) {
 			$this->post_data = array(
-				'group_name' => $this->input->post('group_name')
+				'group_name' => $this->input->post('group_name'),
+				'model_create' => $this->input->post('default_model_create')
 			);
 
 			$ret = TRUE;

@@ -1,6 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Spray_commands_model extends MY_Model {
 	private $table = NULL;
+	private $t_table = NULL;
 	private $spray_cmd_list = NULL;
 	private $spray_dir = NULL;
 	
@@ -9,6 +10,7 @@ class Spray_commands_model extends MY_Model {
 		parent::__construct();
 		
 		$this->table = 'spray_commands';
+		$this->t_table = 'spray_template';
 		
 		$this->config->load('spray');
 		$this->load->helper('directory');
@@ -36,7 +38,7 @@ class Spray_commands_model extends MY_Model {
 		return array_key_exists($group, $this->spray_cmd_list) ? $this->spray_cmd_list[$group]['command'] : NULL;
 	}
 	
-	public function add_group($group_name)
+	public function add_group($group_name, $create_model)
 	{
 		$ret = FALSE;
 		
@@ -48,6 +50,14 @@ class Spray_commands_model extends MY_Model {
 			// Model group
 			$group = $this->spray_model_dir . $group_name;
 			$ret = @mkdir($group);
+			
+			// Default Model create
+			if($create_model == 'Y') {
+				$model_file = $group . '/default_model.php';
+				$template = $this->get_template('default', 'model');
+				$content = str_replace('{table}', $group_name, $template['content']);
+				file_put_contents($model_file, $content);
+			}
 
 			// View group
 			$group = $this->spray_view_dir . $group_name;
@@ -92,8 +102,16 @@ class Spray_commands_model extends MY_Model {
 
 			// Model group
 			$group = $this->spray_model_dir . $group_name;
-			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
 
+			// Default model file remove
+			$model_file = $group . '/default_model.php';
+			if(file_exists($model_file)) {
+				unlink($model_file);
+			}
+			
+			// Model group remove
+			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
+			
 			// View group
 			$group = $this->spray_view_dir . $group_name;
 			$ret = $ret && ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
@@ -118,6 +136,15 @@ class Spray_commands_model extends MY_Model {
 		return $ret;
 	}
 
+	public function get_template($name, $type)
+	{
+		return $this->set_table($this->t_table)
+			->set_select('content')
+			->set_where('name', $name)
+			->set_where('type', $type)
+			->get_one();
+	}
+	
 	private function _exists_group($group_name)
 	{
 		return file_exists($this->spray_dir . $group_name) 

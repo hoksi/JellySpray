@@ -24,7 +24,6 @@ class Delete_group extends Jelly {
 			$this->responseCode = 1;
 			$this->responseMessage = '그룹명 누락';
 		}
-		
 		return $this->get_res();
 	}
 	

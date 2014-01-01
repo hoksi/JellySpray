@@ -57,8 +57,6 @@
 
 	function add_command(group_name)
 	{
-		if(confirm('[' + group_name + '] 그룹에 전문을 추가 하시겠습니까?')) {
-			document.location.href = '<?php echo $base_url?>/add_command/' + group_name;
-		}
+		document.location.href = '<?php echo $base_url?>/add_command/' + group_name;
 	}
 </script>

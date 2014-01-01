@@ -47,6 +47,24 @@ class Add_command extends Jelly {
 				$this->post_data = array(
 					'command_name' => $this->input->post('command_name')
 				);
+				
+				$item_len = (int) $this->input->post('item_len');
+				for($i=1; $i <= $item_len; $i++) {
+					if($fname = $this->input->post('item' . $i)) {
+						$opt = '';
+						for($j=1; $j <= 4; $j++) {
+							$opt .= ($this->input->post('item' . $i . '_opt' . $j) . '|');
+						}
+						$this->post_data['v_config'][] = array(
+							'field' => $fname,
+							'label' => ucfirst($fname),
+							'rules' => rtrim(str_replace('||', '|', $opt), '|')
+						);
+					}
+				}
+				
+				print_r($this->post_data);
+				exit;
 	
 				$ret = TRUE;
 			} else {
