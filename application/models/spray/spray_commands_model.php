@@ -120,17 +120,47 @@ class Spray_commands_model extends MY_Model {
 		return $ret;
 	}
 	
-	public function add_command($group_name, $command_name)
+	public function add_command($group_name, $command_name, $vconfig = NULL)
 	{
 		$ret = FALSE;
 		
 		$finfo = explode('.', $command_name);
 		$command_name = $finfo[0];
 		if($command_name != NULL && !$this->_exists_command($group_name, $command_name)) {
+			// Controller file create
 			$command = $this->spray_dir . $group_name . '/' . $command_name . '.php';
-			$ret = @touch($command);
+			$template = $this->get_template('default', 'controller');
+			$v_str = '';
+			$d_str = '';
+			$e_str = '';
+			$err_code = 1;
+			foreach($vconfig as $vitem) {
+				$v_str .= 'array(';
+				$v_str .= "'field' => '{$vitem['field']}', ";
+				$v_str .= "'label' => '{$vitem['label']}', ";
+				$v_str .= "'label' => '{$vitem['rules']}', ";
+				$v_str .= '),' . "\n\t\t";
+				
+				$d_str .= "'{$vitem['field']}' => \$this->input->post('{$vitem['field']}'),\n\t\t\t\t";
+				
+				$e_str .= "if(strstr(\$err, '{$vitem['label']}')) {\n";
+				$e_str .= "\$this->responseCode = 1;\n";
+				$e_str .= "break;\n";
+				$e_str .= "}\n\t\t\t\t";
+			}
+			
+			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}');
+			$pval = array(ucfirst($command_name), $group_name, rtrim($v_str), rtrim($d_str), rtrim($e_str));
+			$content = str_replace($parser, $pval, $template['content']);
+			$ret = file_put_contents($command, $content);
+
+			// View file create
 			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
-			$ret = @touch($command);
+			$template = $this->get_template('default', 'view');
+			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}');
+			$pval = array(ucfirst($command_name), $group_name, 'array()');
+			$content = str_replace($parser, $pval, $template['content']);
+			$ret = file_put_contents($command, $content);
 		}
 		
 		return $ret;
@@ -145,6 +175,16 @@ class Spray_commands_model extends MY_Model {
 			->get_one();
 	}
 	
+	private function _make_controller()
+	{
+		$template = $this->get_template('default', 'controller');
+		$parser = array('{class_name}', '{group_name}', '{validation}');
+		$pval = array(ucfirst($command_name), $group_name, 'array()');
+		$content = str_replace($parser, $pval, $template['content']);
+		
+		return $content;
+	}
+	
 	private function _exists_group($group_name)
 	{
 		return file_exists($this->spray_dir . $group_name) 
@@ -157,8 +197,8 @@ class Spray_commands_model extends MY_Model {
 	
 	private function _exists_command($group_name, $command)
 	{
-		return file_exists($this->spray_dir . $group_name . '/' . $command) 
-			   && file_exists($this->spray_view_dir . $group_name . '/' . $command);
+		return file_exists($this->spray_dir . $group_name . '/' . $command . '.php') 
+			   && file_exists($this->spray_view_dir . $group_name . '/' . $command . '.php');
 	}
 	
 	private function _remove_all($dir)

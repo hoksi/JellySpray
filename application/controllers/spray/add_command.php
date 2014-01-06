@@ -18,17 +18,19 @@ class Add_command extends Jelly {
 	
 	public function run($group = NULL)
 	{
+		$this->data = array('command_name' => $this->input->post('command_name'));
+
 		if($this->validation($group)) {
-			if($this->spray_commands_model->add_command($group, $this->post_data['command_name'])) {
+			if($this->spray_commands_model->add_command($group, $this->post_data['command_name'], $this->post_data['v_config'])) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add command success';
 			} else {
 				$this->responseCode = 4;
 				$this->responseMessage = '이미 존재하는 전문 입니다.';
+				$this->data['vconfig'] = isset($this->post_data['v_config']) ? $this->post_data['v_config'] : NULL;
 			}
 		}
 		
-		$this->data = array('command_name' => $this->input->post('command_name'));
 		
 		return $this->get_res();
 	}
@@ -63,9 +65,6 @@ class Add_command extends Jelly {
 					}
 				}
 				
-				print_r($this->post_data);
-				exit;
-	
 				$ret = TRUE;
 			} else {
 				$this->responseCode = 3;

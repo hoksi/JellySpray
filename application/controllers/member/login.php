@@ -56,7 +56,7 @@ class Login extends Spray {
 					'auth' => $session_id
 				);
 			} else {
-				$this->responseCode = 2;
+				$this->responseCode = 3;
 				$this->responseMessage = '등록되지 않은 Email 이거나 비밀번호 오류';
 			}
 		}
@@ -94,18 +94,20 @@ class Login extends Spray {
 
 			$ret = TRUE;
 		} else {
+			$this->responseCode = -1;
+			$err = validation_errors();
+			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Email')) {
-					$this->responseCode = 3;
+					$this->responseCode = 1;
 					$err = '올바른 Email 형식이 아님';
 					break;
-				} elseif(strstr($err, 'Password')) {
-					$this->responseCode = 4;
+				} 
+				
+				if(strstr($err, 'Password')) {
+					$this->responseCode = 2;
 					$err = 'password 누락';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = validation_errors();
 				}
 			}
 

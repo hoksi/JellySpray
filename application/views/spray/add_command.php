@@ -1,6 +1,12 @@
+	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
+
 <?php if($responseCode != 0): ?>
 	<form method="post" role="form" class="form-horizontal" id="add_command_form">
+<?php if(isset($data['vconfig']) && $data['vconfig']):?>
+		<input type="hidden" name="item_len" value="<?php echo count($data['vconfig']) ?>" id="item_len"/>
+<?php else: ?>
 		<input type="hidden" name="item_len" value="0" id="item_len"/>
+<?php endif; ?>
 		<table id="command" class="table table-bordered">
 		    <tr>
 		        <td>Group name</td>
@@ -12,11 +18,15 @@
 		        <td><input type="text" name="command_name" value="<?php echo $data['command_name']?>" id="command_name" /></td>
 		        <td>새 전문 이름</td>
 		    </tr>
+		    <tr>
+		        <td>Add form field</td>
+		        <td><input type="button" value="Field add" class="btn btn-info" id="addFieldBtn" /></td>
+		        <td>폼 필드를 추가 합니다.</td>
+		    </tr>
 			<tr>
 				<td></td>
 				<td>
-					<input type="submit" value="Add" class="btn btn-primary" />
-					<input type="button" value="Field add" class="btn btn-info" id="addFieldBtn" />
+					<input type="submit" value="Add command" class="btn btn-primary" />
 					<a href="/spray/cmd_list/<?php echo $segment[0]?>" class="btn btn-default">Back</a>
 				</td>
 				<td></td>
@@ -26,9 +36,28 @@
 		        <th>Field Option</th>
 		        <th>Action</th>
 		    </tr>
+<?php if(isset($data['vconfig']) && $data['vconfig']):?>
+<?php $idx = 1; ?> 
+<?php foreach($data['vconfig'] as $item):?>
+<?php $item_name = 'item' . $idx++; ?>
+<?php $rules = explode('|', $item['rules'])?>
+		    <tr class="<?php echo $item_name; ?>">
+		        <td><input type="text" name="<?php echo $item_name; ?>" value="<?php echo $item['field']; ?>"></td>
+		        <td>
+		        	<input type="checkbox" value="required" name="<?php echo $item_name; ?>_opt1" <?php echo in_array('required', $rules) ? 'checked="checked"' : ''?> /> required :: 
+					<input type="checkbox" value="trim" name="<?php echo $item_name; ?>_opt2" <?php echo in_array('trim', $rules) ? 'checked="checked"' : ''?> /> trim :: 
+					<input type="checkbox" value="valid_email" name="<?php echo $item_name; ?>_opt3" <?php echo in_array('valid_email', $rules) ? 'checked="checked"' : ''?> /> email :: 
+					<input type="checkbox" value="xss_clean" name="<?php echo $item_name; ?>_opt4" <?php echo in_array('xss_clean', $rules) ? 'checked="checked"' : ''?> /> xss_clean<br/>
+					Error message : <input type="input" name="itemx_errmsg" size="30" />
+				</td>
+		        <td>
+		        	<button class="delBtn" type="button">삭제</button>
+		        </td>
+		    </tr>
+<?php endforeach; ?>
+<?php endif; ?>		    
 		</table>
 	</form>	
-	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
 	<div style="display:none">
 		<table id="field_form">
 		    <tr class="itemx">
