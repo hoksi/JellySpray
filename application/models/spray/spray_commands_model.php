@@ -144,9 +144,10 @@ class Spray_commands_model extends MY_Model {
 				$d_str .= "'{$vitem['field']}' => \$this->input->post('{$vitem['field']}'),\n\t\t\t\t";
 				
 				$e_str .= "if(strstr(\$err, '{$vitem['label']}')) {\n";
-				$e_str .= "\$this->responseCode = 1;\n";
+				$e_str .= "\$this->responseCode = {$err_code};\n";
 				$e_str .= "break;\n";
 				$e_str .= "}\n\t\t\t\t";
+				$err_code++;
 			}
 			
 			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}');
