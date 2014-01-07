@@ -138,8 +138,8 @@ class Spray_commands_model extends MY_Model {
 				$v_str .= 'array(';
 				$v_str .= "'field' => '{$vitem['field']}', ";
 				$v_str .= "'label' => '{$vitem['label']}', ";
-				$v_str .= "'label' => '{$vitem['rules']}', ";
-				$v_str .= '),' . "\n\t\t";
+				$v_str .= "'rules' => '{$vitem['rules']}' ";
+				$v_str .= '),' . "\n\t\t\t";
 				
 				$d_str .= "'{$vitem['field']}' => \$this->input->post('{$vitem['field']}'),\n\t\t\t\t";
 				
@@ -149,7 +149,6 @@ class Spray_commands_model extends MY_Model {
 				$e_str .= "\t\t\t\t}\n\t\t\t\t";
 				$err_code++;
 			}
-			
 			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}');
 			$pval = array(ucfirst($command_name), $group_name, rtrim($v_str), rtrim($d_str), rtrim($e_str));
 			$content = str_replace($parser, $pval, $template['content']);
@@ -158,10 +157,33 @@ class Spray_commands_model extends MY_Model {
 			// View file create
 			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
 			$template = $this->get_template('default', 'view');
-			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}');
-			$pval = array(ucfirst($command_name), $group_name, 'array()');
+
+			$v_str = '';
+			foreach($vconfig as $vitem) {
+				$v_str .= "\t<tr>\n";
+				$v_str .= "\t\t<td>{$vitem['field']}</td>\n";
+				$v_str .= "\t\t<td><input type=\"text\" name=\"{$vitem['field']}\" value=\"\" id=\"{$vitem['field']}\" /></td>\n";
+				$v_str .= "\t\t<td></td>\n";
+				$v_str .= "\t</tr>\n";
+			}
+			$parser = array('{field_list}');
+			$pval = array(rtrim($v_str));
 			$content = str_replace($parser, $pval, $template['content']);
 			$ret = file_put_contents($command, $content);
+		}
+		
+		return $ret;
+	}
+
+	public function delete_command($group_name, $command_name)
+	{
+		$ret = FALSE;
+		
+		if($this->_exists_command($group_name, $command_name)) {
+			$command = $this->spray_dir . $group_name . '/' . $command_name . '.php';
+			$ret = unlink($command);
+			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
+			$ret = unlink($command);
 		}
 		
 		return $ret;
@@ -174,16 +196,6 @@ class Spray_commands_model extends MY_Model {
 			->set_where('name', $name)
 			->set_where('type', $type)
 			->get_one();
-	}
-	
-	private function _make_controller()
-	{
-		$template = $this->get_template('default', 'controller');
-		$parser = array('{class_name}', '{group_name}', '{validation}');
-		$pval = array(ucfirst($command_name), $group_name, 'array()');
-		$content = str_replace($parser, $pval, $template['content']);
-		
-		return $content;
 	}
 	
 	private function _exists_group($group_name)

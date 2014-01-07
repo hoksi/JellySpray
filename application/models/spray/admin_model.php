@@ -9,7 +9,7 @@ class Admin_model extends MY_Model {
 	
 	public function login($email, $pw)
 	{
-		return $this->set_select('admin_id')
+		return $this->set_select('admin_id, test_session_key')
 			 ->set_table($this->table)
 			 ->set_where('email', $email)
 			 ->set_where('pw', "md5('{$pw}')", FALSE)

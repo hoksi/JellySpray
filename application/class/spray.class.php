@@ -133,7 +133,7 @@ abstract class Spray extends CI_Controller {
 				'auth' => $this->_auth_key
 			);
 			
-			$this->load->view('spray_test', $params);
+			$this->load->view('spray/spray_test', $params);
 		} else {
 			echo "<a href='/member/login/test'>Login first!! - Click me</a>";
 		}
@@ -208,7 +208,7 @@ abstract class Spray extends CI_Controller {
 
 		if($this->_mode == 'JSON') {
 			$this->output->append_output(json_encode($_data));
-		} elseif($this->_mode == 'XML') $this->load->view('spray', $_data);
+		} elseif($this->_mode == 'XML') $this->load->view('spray/spray', $_data);
 		else show_404();
 	}
 
@@ -291,7 +291,51 @@ abstract class Spray extends CI_Controller {
 	 *
 	 * @return array
 	 */
-	function error_chk() {
+	public function error_chk() {
 		return explode("\n", strip_tags(validation_errors()));
 	}	
+
+	/**
+	 * 파일을 업로드 한다.
+	 * 
+	 * @param string $upfile
+	 * @param string $upload_path
+	 * @param string $alloed_types
+	 * @param int $max_size
+	 * 
+	 * @return array
+	 */
+    public function do_upload($upfile = 'upfile', $upload_path = NULL, $alloed_types = 'jpg|png', $max_size = 10240) {
+		 // Uload Config 설정
+        $config = array(
+            'upload_path' => $upload_path,
+            'allowed_types' => $alloed_types,
+            'max_size' => $max_size,
+            'encrypt_name' => TRUE
+        );
+         
+        $this->load->library('upload', $config);
+		$data = array('upload_data' => NULL, 'error' => NULL);
+        if (!$this->upload->do_upload($upfile)) {
+            $data['error'] = $this->upload->display_errors();
+        } else {
+            $data['upload_data'] = $this->upload->data();
+			if($data['upload_data']['is_image'] == 1) {
+				$this->make_thumb($data['upload_data']['full_path'], './thumb/' . $data['upload_data']['raw_name'] . $data['upload_data']['file_ext']);
+			}
+        }
+ 
+        return $data;
+    }
+	
+	public function make_thumb($origin_file, $target_file)
+	{
+		$this->load->library('image_moo');
+		
+		$this->image_moo
+			 ->load($origin_file)
+			 ->resize_crop(100, 100)
+			 ->save($target_file)
+			 ->clear();
+	}
 }

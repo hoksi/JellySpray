@@ -15,7 +15,7 @@
 			<h4><?=$command?> 전문 테스트</h4>
 		</div>
 		<div class="row well">
-			<form method="post" action="/<?php echo $spray_dir?>/<?php echo $command?>/debug/<?php echo $auth?>" id="send" target="_blank">
+			<form method="post" action="/<?php echo $spray_dir?>/<?php echo $command?>/debug/<?php echo $auth?>" id="send" target="_blank" enctype="multipart/form-data">
 			<?php $this->load->view($spray_dir . '/' . $command);?>
 			</form>
 		</div>

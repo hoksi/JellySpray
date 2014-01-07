@@ -1,6 +1,11 @@
-	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
-
 <?php if($responseCode != 0): ?>
+
+<?php if($responseCode > 0): ?>
+	<div class="alert alert-danger"><?php echo $responseMessage;?></div>
+<?php else : ?>
+	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
+<?php endif; ?>
+
 	<form method="post" role="form" class="form-horizontal" id="add_command_form">
 <?php if(isset($data['vconfig']) && $data['vconfig']):?>
 		<input type="hidden" name="item_len" value="<?php echo count($data['vconfig']) ?>" id="item_len"/>
@@ -110,7 +115,7 @@
             		$('#command_name').focus();
             		return false;
             	} else {
-            		return true;
+            		return confirm('새로운 전문을 만들까요?');
             	}
             });
 		});

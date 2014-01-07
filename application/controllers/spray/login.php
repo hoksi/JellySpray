@@ -25,6 +25,7 @@ class Login extends Jelly {
 				
 				$this->data['email'] = $this->post_data['email'];
 				$this->session_model->replace_session($this->_auth_key, $this->data);
+				$this->data = array();
 			} else {
 				$this->responseCode = 5;
 				$this->responseMessage = 'Login 실패 (Email과 Password를 확인하여 주십시오.)';
@@ -54,22 +55,23 @@ class Login extends Jelly {
 
 			$ret = TRUE;
 		} else {
+			$this->responseCode = -1;
+
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Email')) {
-					$this->responseCode = 3;
+					$this->responseCode = 1;
 					$err = '올바른 Email 형식이 아님';
 					break;
-				} elseif(strstr($err, 'Passwd')) {
-					$this->responseCode = 4;
+				} 
+				
+				if(strstr($err, 'Passwd')) {
+					$this->responseCode = 2;
 					$err = 'password 누락';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = 'email 과 비밀번호를 입력해 주십시오.';
 				}
 			}
-
-			$this->responseMessage = $err;
+			
+			$this->responseMessage = $err ? $err : 'email 과 비밀번호를 입력해 주십시오.';
 		}
 
 		return $ret;

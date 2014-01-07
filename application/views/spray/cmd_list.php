@@ -1,4 +1,7 @@
-<p align="right"><a class="btn btn-primary" href="<?php echo $base_url?>/add_group">Add group</a></p>
+<p align="right">
+	<a class="btn btn-primary" href="<?php echo $base_url?>/add_group">Add group</a>
+	<a class="btn btn-default" href="">테스트용 세션키 설정</a>
+</p>
 <table class="table table-bordered table-hover">
 <thead>
 	<tr>
@@ -31,10 +34,10 @@
 		<?php foreach($group['command'] as $cmd):?>
 	<tr class="active">
 		<td></td>
-		<td><a class="btn btn-default" href="/<?php echo $group['name']?>/<?php echo $cmd; ?>/test" target="_blank"><?php echo $cmd; ?></a></td>
+		<td><a class="btn btn-default" href="/<?php echo $group['name']?>/<?php echo $cmd; ?>/test/<?php echo $this->bu_session['test_session_key']?>" target="_blank"><?php echo $cmd; ?></a></td>
 		<td><?php echo base_url($group['name'] . '/' . $cmd); ?>/json</td>
 		<td></td>
-		<td></td>
+		<td><a class="btn btn-link" onclick="delete_command('<?php echo $group['name']?>', '<?php echo $cmd?>')">삭제</a></td>
 	</tr>
 		<?php endforeach; ?>
 	<?php endif; ?>
@@ -59,4 +62,13 @@
 	{
 		document.location.href = '<?php echo $base_url?>/add_command/' + group_name;
 	}
+
+
+	function delete_command(group_name, command_name)
+	{
+		if(confirm('[' + group_name + '/' + command_name + '] 전문을 삭제 하시겠습니까?')) {
+			document.location.href = '<?php echo $base_url?>/delete_command/' + group_name + '/' + command_name;
+		}
+	}
+
 </script>

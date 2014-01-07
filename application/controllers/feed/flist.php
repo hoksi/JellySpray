@@ -5,12 +5,15 @@
  * @package spray
  * @author  한대승 <hoksi2k@hanmail.net>
  */
-class Addtest2 extends Spray {
+class Flist extends Spray {
+	protected $post_data;
+	
 	public function __construct()
 	{
 		parent::__construct();
 		
-		// $this->load->model('feed/default_model');
+		$this->load->model('feed/default_model');
+		$this->post_data = array();
 		if(FALSE) $this->default_model = new Default_model;
 	}
 	
@@ -18,8 +21,10 @@ class Addtest2 extends Spray {
 	{
 		if($this->validation()) {
 			$this->responseCode = 0;
-			$this->responseMessage = '검증 성공';
-				
+			$this->responseMessage = 'Feed list';
+			
+			$this->data = array('feed' => $this->default_model->get_page($this->post_data['page'], 20));
+			$this->data['next_page'] = count($this->data['feed']) == 20 ? $this->post_data['page'] + 1 : '';
 		}
 		
 		return $this->get_res();
@@ -31,21 +36,21 @@ class Addtest2 extends Spray {
 
 		// validation 조건 확인
 		$config = array(
-			array('field' => 'test1', 'label' => 'Test1', 'label' => 'required|trim|valid_email|xss_clean', ),
+			array('field' => 'page', 'label' => 'Page', 'rules' => 'required|trim|xss_clean|integer' ),
 		);
 
 		if($this->form_chk($config)) {
 			$this->post_data = array(
-				'test1' => $this->input->post('test1'),
+				'page' => $this->input->post('page'),
 			);
 
 			$ret = TRUE;
 		} else {
 			$this->responseCode = -1;
-			$err = validation_errors();
+			$err = '필수 데이터 입력이 되지 않았습니다.';
 			
 			foreach($this->error_chk() as $err) {
-				if(strstr($err, 'Test1')) {
+				if(strstr($err, 'Page')) {
 					$this->responseCode = 1;
 					break;
 				}

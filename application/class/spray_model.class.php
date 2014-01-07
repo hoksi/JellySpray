@@ -187,6 +187,21 @@ class Spray_model extends CI_Model {
 		return $this;
 	}
 	
+	 /**
+     * 검색 limit을 설정 한다.
+     *
+     * @access  public
+     * @param   int $value 리턴 받을 행의 수
+     * @param   int $offset 건너띨 행의 수
+     * @return  object
+     */
+	public function set_limit($value, $offset = '')
+	{
+		$this->_rodb->limit($value, $offset);
+		
+		return $this;
+	}
+	
     /**
      * 정렬을 설정 한다.
      *

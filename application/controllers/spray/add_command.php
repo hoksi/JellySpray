@@ -25,7 +25,7 @@ class Add_command extends Jelly {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add command success';
 			} else {
-				$this->responseCode = 4;
+				$this->responseCode = 3;
 				$this->responseMessage = '이미 존재하는 전문 입니다.';
 				$this->data['vconfig'] = isset($this->post_data['v_config']) ? $this->post_data['v_config'] : NULL;
 			}
@@ -67,18 +67,18 @@ class Add_command extends Jelly {
 				
 				$ret = TRUE;
 			} else {
-				$this->responseCode = 3;
+				$this->responseCode = 2;
 				$this->responseMessage = '전문을 추가할 그룹명 누락';
 			}
 		} else {
+			$this->responseCode = -1;
+			$err = '새로운 전문을 추가 합니다.';
+			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'CommandName')) {
-					$this->responseCode = 2;
+					$this->responseCode = 1;
 					$err = '새로운 전문이름을 입력하세요.';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = '새로운 전문을 추가 합니다.';
 				}
 			}
 
