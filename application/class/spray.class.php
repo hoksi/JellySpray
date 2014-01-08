@@ -208,7 +208,7 @@ abstract class Spray extends CI_Controller {
 
 		if($this->_mode == 'JSON') {
 			$this->output->append_output(json_encode($_data));
-		} elseif($this->_mode == 'XML') $this->load->view('spray/spray', $_data);
+		} elseif($this->_mode == 'XML') $this->load->view('spray/debug', $_data);
 		else show_404();
 	}
 

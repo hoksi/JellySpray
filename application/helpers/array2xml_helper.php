@@ -10,14 +10,14 @@ if ( ! function_exists('array2xml')) {
 			foreach ($data as $key => $value) {
 				$tabs = str_repeat("\t", $deepth);
 
-				if(is_array($value)) {
+				if(is_array($value) && !empty($value)) {
 					foreach ($value as $sub_data) {
 						echo "{$tabs}<{$key}>\n";
 						array2xml($sub_data, $deepth + 1);
 						echo "{$tabs}</{$key}>\n";
 					}
 				} else {
-					echo $tabs . '<' . $key . '>' . xml_convert(str_replace(chr(8), '', $value)) . '</' . $key . '>' . "\n";
+					echo $tabs . '<' . $key . '>' . xml_convert(str_replace(chr(8), '', empty($value) ? NULL : $value)) . '</' . $key . '>' . "\n";
 				}
 			}
 		} else {

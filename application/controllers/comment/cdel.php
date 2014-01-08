@@ -1,11 +1,11 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Spray contrroller Get
+ * Spray contrroller Cdel
  *
  * @package spray
  * @author  한대승 <hoksi2k@hanmail.net>
  */
-class Get extends Spray {
+class Cdel extends Spray {
 	private $post_data;
 
 	public function __construct()
@@ -16,17 +16,13 @@ class Get extends Spray {
 		if(FALSE) $this->default_model = new Default_model;
 	}
 	
-	public function run($group = NULL)
+	public function run()
 	{
 		if($this->validation()) {
-			$this->data = $this->default_model->get_feed($this->post_data['fid']);
-			if(!empty($this->data)) {
-				$this->responseCode = 0;
-				$this->responseMessage = 'Feed Detail';
-			} else {
-				$this->responseCode = 2;
-				$this->responseMessage = '삭제 되었거나 존재하지 않는 Feed 입니다.';
-			}
+			$this->responseCode = 0;
+			$this->responseMessage = '삭제 성공';
+
+			$this->default_model->del_comment($this->post_data['cid']);
 		}
 		
 		return $this->get_res();
@@ -38,20 +34,20 @@ class Get extends Spray {
 
 		// validation 조건 확인
 		$config = array(
-			array('field' => 'fid', 'label' => 'Fid', 'rules' => 'required|trim|xss_clean|integer' ),
+			array('field' => 'cid', 'label' => 'Cid', 'rules' => 'required|trim|xss_clean|integer' ),
 		);
 
 		if($this->form_chk($config)) {
 			$this->post_data = array(
-				'fid' => $this->input->post('fid'),
+				'cid' => $this->input->post('cid'),
 			);
-
+			
 			$ret = TRUE;
 		} else {
 			$this->responseCode = -1;
 			
 			foreach($this->error_chk() as $err) {
-				if(strstr($err, 'Fid')) {
+				if(strstr($err, 'Cid')) {
 					$this->responseCode = 1;
 					break;
 				}
@@ -61,7 +57,6 @@ class Get extends Spray {
 		}
 
 		return $ret;
-
 	}
 } 
-/* End of file get.php */
+/* End of file cdel.php */

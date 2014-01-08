@@ -1,11 +1,11 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Spray contrroller Get
+ * Spray contrroller Cwrite
  *
  * @package spray
  * @author  한대승 <hoksi2k@hanmail.net>
  */
-class Get extends Spray {
+class Cwrite extends Spray {
 	private $post_data;
 
 	public function __construct()
@@ -19,14 +19,10 @@ class Get extends Spray {
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			$this->data = $this->default_model->get_feed($this->post_data['fid']);
-			if(!empty($this->data)) {
-				$this->responseCode = 0;
-				$this->responseMessage = 'Feed Detail';
-			} else {
-				$this->responseCode = 2;
-				$this->responseMessage = '삭제 되었거나 존재하지 않는 Feed 입니다.';
-			}
+			$this->responseCode = 0;
+			$this->responseMessage = '댓글이 등록 되었습니다.';
+			
+			$this->default_model->add_comment($this->post_data);
 		}
 		
 		return $this->get_res();
@@ -38,12 +34,15 @@ class Get extends Spray {
 
 		// validation 조건 확인
 		$config = array(
-			array('field' => 'fid', 'label' => 'Fid', 'rules' => 'required|trim|xss_clean|integer' ),
+			array('field' => 'fid', 'label' => 'Fid', 'rules' => 'required|trim|xss_clean' ),
+			array('field' => 'content', 'label' => 'Content', 'rules' => 'required|trim|xss_clean' ),
 		);
 
 		if($this->form_chk($config)) {
 			$this->post_data = array(
 				'fid' => $this->input->post('fid'),
+				'content' => $this->input->post('content'),
+				'fimg' => $this->do_upload('fimg', 'upload')
 			);
 
 			$ret = TRUE;
@@ -55,13 +54,16 @@ class Get extends Spray {
 					$this->responseCode = 1;
 					break;
 				}
+				if(strstr($err, 'Content')) {
+					$this->responseCode = 2;
+					break;
+				}
 			}
 
-			$this->responseMessage = $err ? $err : '데이터가 입력되지 않았습니다.';
+			$this->responseMessage = $err ? $err : '데이터가 입력되지 않았습니다.';;
 		}
 
 		return $ret;
-
 	}
 } 
-/* End of file get.php */
+/* End of file cwrite.php */

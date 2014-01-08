@@ -1,11 +1,11 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Spray contrroller Get
+ * Spray contrroller Flike
  *
  * @package spray
  * @author  한대승 <hoksi2k@hanmail.net>
  */
-class Get extends Spray {
+class Flike extends Spray {
 	private $post_data;
 
 	public function __construct()
@@ -19,14 +19,10 @@ class Get extends Spray {
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			$this->data = $this->default_model->get_feed($this->post_data['fid']);
-			if(!empty($this->data)) {
-				$this->responseCode = 0;
-				$this->responseMessage = 'Feed Detail';
-			} else {
-				$this->responseCode = 2;
-				$this->responseMessage = '삭제 되었거나 존재하지 않는 Feed 입니다.';
-			}
+			$this->responseCode = 0;
+			$this->responseMessage = 'Feed 좋아요';
+			
+			$this->default_model->feed_like($this->post_data['fid']);
 		}
 		
 		return $this->get_res();
@@ -61,7 +57,6 @@ class Get extends Spray {
 		}
 
 		return $ret;
-
 	}
 } 
-/* End of file get.php */
+/* End of file flike.php */
