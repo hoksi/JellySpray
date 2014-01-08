@@ -7,6 +7,9 @@
 <?php endif; ?>
 
 	<form action="<?php echo config_item('default_login_url')?>" method="post" role="form" class="form-horizontal">
+<?php if($data['ref']) :?>
+	<input type="hidden" name="ref" value="<?php echo $data['ref']; ?>" />
+<?php endif; ?>		
 		<table class="table table-bordered">
 		    <thead>
 		    <tr>
@@ -36,7 +39,5 @@
 		</table>
 	</form>	
 <?php else: ?>
-	<script>
-		document.location.replace('/spray/cmd_list');
-	</script>
+<?php redirect($data['ref'] ? $data['ref'] : '/spray/cmd_list'); ?>
 <?php endif; ?>	

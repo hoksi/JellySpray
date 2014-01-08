@@ -1,4 +1,12 @@
 <?php if($responseCode != 0): ?>
+
+<?php if($responseCode > 0): ?>
+	<div class="alert alert-danger"><?php echo $responseMessage;?></div>
+<?php else : ?>
+	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
+<?php endif; ?>
+
+
 	<form method="post" role="form" class="form-horizontal">
 		<table class="table table-bordered">
 		    <thead>
@@ -29,7 +37,6 @@
 			</tr>
 		</table>
 	</form>	
-	<div class="alert alert-warning"><?php echo $responseMessage;?></div>
 <?php else: ?>
 	<script>
 		document.location.replace('/spray/cmd_list');

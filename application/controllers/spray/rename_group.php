@@ -23,7 +23,7 @@ class Rename_group extends Jelly {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add group success';
 			} else {
-				$this->responseCode = 4;
+				$this->responseCode = 3;
 				$this->responseMessage = '이미 존재하는 그룹 입니다.';
 			}
 		}
@@ -50,22 +50,21 @@ class Rename_group extends Jelly {
 	
 				$ret = TRUE;
 			} else {
-				$this->responseCode = 3;
+				$this->responseCode = 2;
 				$this->responseMessage = '그룹명 누락';
 			}
 		} else {
+			$this->responseCode = -1;
+
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'GroupName')) {
-					$this->responseCode = 2;
+					$this->responseCode = 1;
 					$err = '바꿀 그룹 이름을 입력하세요.';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = '그룹 이름을 변경 합니다.';
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '그룹 이름을 변경 합니다.';
 		}
 
 		return $ret;

@@ -23,7 +23,7 @@ class Fwrite extends Spray {
 	{
 		if($this->validation()) {
 			$this->responseCode = 0;
-			$this->responseMessage = '검증 성공';
+			$this->responseMessage = 'Feed가 등록 되었습니다.';
 			
 			$this->default_model->add_feed($this->post_data);
 		}
@@ -54,7 +54,6 @@ class Fwrite extends Spray {
 			$ret = TRUE;
 		} else {
 			$this->responseCode = -1;
-			$err = validation_errors();
 			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Title')) {
@@ -67,7 +66,7 @@ class Fwrite extends Spray {
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '데이터가 입력되지 않았습니다.';
 		}
 
 		return $ret;

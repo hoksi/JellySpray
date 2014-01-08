@@ -48,18 +48,17 @@ class Add_group extends Jelly {
 
 			$ret = TRUE;
 		} else {
+			$this->responseCode = -1;
+			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'GroupName')) {
-					$this->responseCode = 2;
+					$this->responseCode = 1;
 					$err = '신규 그룹이름을 입력하세요.';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = '신규 그룹을 생성 합니다.';
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '신규 그룹을 생성 합니다.';
 		}
 
 		return $ret;

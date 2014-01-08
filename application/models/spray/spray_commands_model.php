@@ -149,8 +149,8 @@ class Spray_commands_model extends MY_Model {
 				$e_str .= "\t\t\t\t}\n\t\t\t\t";
 				$err_code++;
 			}
-			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}');
-			$pval = array(ucfirst($command_name), $group_name, rtrim($v_str), rtrim($d_str), rtrim($e_str));
+			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}', '{command_name}');
+			$pval = array(ucfirst($command_name), $group_name, rtrim($v_str), rtrim($d_str), rtrim($e_str), $command_name);
 			$content = str_replace($parser, $pval, $template['content']);
 			$ret = file_put_contents($command, $content);
 
@@ -163,7 +163,11 @@ class Spray_commands_model extends MY_Model {
 				$v_str .= "\t<tr>\n";
 				$v_str .= "\t\t<td>{$vitem['field']}</td>\n";
 				$v_str .= "\t\t<td><input type=\"text\" name=\"{$vitem['field']}\" value=\"\" id=\"{$vitem['field']}\" /></td>\n";
-				$v_str .= "\t\t<td></td>\n";
+				if(strstr($vitem['rules'], 'required')) {
+					$v_str .= "\t\t<td>필수입력</td>\n";
+				} else {
+					$v_str .= "\t\t<td></td>\n";
+				}
 				$v_str .= "\t</tr>\n";
 			}
 			$parser = array('{field_list}');

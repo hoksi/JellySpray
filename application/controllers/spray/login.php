@@ -6,12 +6,16 @@
  * @author  한대승 <hoksi2k@hanmail.net>
  */
 class Login extends Jelly {
+	private $post_data;
+	
 	public function __construct()
 	{
 		parent::__construct();
 		
 		$this->load->model('spray/admin_model');
 		if(FALSE) $this->session_model = new Session_model;
+		
+		$this->post_data = array();
 	}
 	
 	public function run($group = NULL)
@@ -33,6 +37,7 @@ class Login extends Jelly {
 		}
 		
 		$this->data['email'] = $this->input->post('email');
+		$this->data['ref'] = $this->input->get_post('ref');
 		
 		return $this->get_res();
 	}

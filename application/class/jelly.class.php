@@ -195,13 +195,11 @@ abstract class Jelly extends CI_Controller {
 		$_data = $this->responseCode == 0 ? call_user_func_array(array($this, 'run'), $this->_params) : $this->get_res();
 
 		if($this->responseCode == 9997 || $this->responseCode == 9996) {
-			$this->load->view($this->default_header_file, $_data);
-			$this->load->view($this->config->item('default_login_view') ? $this->config->item('default_login_view') : '/spray/login', $_data);
-			$this->load->view($this->default_footer_file, $_data);
+			redirect('/spray/login/?ref=' . $_data['self'] . '/' . implode('/', $_data['segment']));
 		} elseif($this->_debug) {
 			$this->output->enable_profiler(TRUE);
 			$_data['_debug'] = $this->_debug;
-			$this->load->view('spray', $_data);
+			$this->load->view('spray/spray', $_data);
 		} else {
 			$this->load->view($this->default_header_file, $_data);
 			$this->load->view($this->default_view_file, $_data);

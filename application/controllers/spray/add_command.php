@@ -72,7 +72,6 @@ class Add_command extends Jelly {
 			}
 		} else {
 			$this->responseCode = -1;
-			$err = '새로운 전문을 추가 합니다.';
 			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'CommandName')) {
@@ -82,7 +81,7 @@ class Add_command extends Jelly {
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '새로운 전문을 추가 합니다.';
 		}
 
 		return $ret;
