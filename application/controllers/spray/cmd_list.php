@@ -10,8 +10,8 @@ class Cmd_list extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->load->model('spray/spray_commands_model');
-		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
+		$this->load->model('spray/cmd_list_model');
+		if(FALSE) $this->cmd_list_model = new Cmd_list_model;
 	}
 	
 	public function run($group = NULL)
@@ -20,7 +20,7 @@ class Cmd_list extends Jelly {
 			$this->responseCode = 0;
 			$this->responseMessage = 'Spry file list';
 			$this->data = array(
-				'groups' => $this->spray_commands_model->get_spray_groups($group)
+				'groups' => $this->cmd_list_model->cmd_list($group)
 			);
 		}
 		

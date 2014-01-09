@@ -1,6 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Session_model extends MY_Model {
 	public $table = 'ci_sessions';
+	public $cmd_tbl = 'spray_command';
 
 	public function __construct()
 	{
@@ -71,5 +72,14 @@ class Session_model extends MY_Model {
 		return $this->set_table($this->table)
 					->set_where('session_id', $session_id)
 					->delete();
+	}
+	
+	public function get_ptype($group_name, $command)
+	{
+		$pem = $this->set_table($this->cmd_tbl)
+					->set_select('ptype')
+					->get_one();
+
+		return isset($pem['ptype']) ? $pem['ptype'] : NULL;
 	}
 }

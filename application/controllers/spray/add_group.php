@@ -12,8 +12,6 @@ class Add_group extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->output->enable_profiler();
-		
 		$this->load->model('spray/add_group_model');
 		if(FALSE) $this->add_group_model = new Add_group_model;
 	}

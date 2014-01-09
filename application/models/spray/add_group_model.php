@@ -39,7 +39,7 @@ class Add_group_model extends MY_Model {
 			$ret = @mkdir($group);
 
 			// Default Crud create
-			if($$data['crud_create'] == 'Y') {}
+			if($data['crud_create'] == 'Y') {}
 			
 			if($ret) {
 				$this->add_spray_command($data);

@@ -67,7 +67,7 @@ abstract class Spray extends CI_Controller {
 	 *
 	 * @var array
 	 */
-	private $public_cmd;
+	private $ptype;
 
 	/**
 	 * 생성자
@@ -98,7 +98,6 @@ abstract class Spray extends CI_Controller {
 		$this->output->set_header("Pragma: no-cache");
 
 		$this->data = array();
-		$this->public_cmd = $this->config->item('public_cmd');
 	}
 
 	/**
@@ -112,6 +111,8 @@ abstract class Spray extends CI_Controller {
 	{
 		$cmd = $this->config->item('return_method');
 		$method = strtolower($method);
+		$this->ptype = $this->session_model->get_ptype($this->router->fetch_class(), $method);
+		
 		if(in_array($method, $cmd) !== FALSE) {
 			$this->_auth_key = array_shift($params);
 			$this->_params = $params;
@@ -126,7 +127,7 @@ abstract class Spray extends CI_Controller {
 	 */
 	public function test()
 	{
-		if(in_array($this->router->fetch_class(), $this->public_cmd) !== FALSE || $this->session_model->exists_session_id($this->_auth_key)) {
+		if($this->ptype == 'guest' || $this->session_model->exists_session_id($this->_auth_key)) {
 			$params = array(
 				'spray_dir' => $this->uri->segment(1),
 				'command' => $this->router->fetch_class(), 
@@ -196,7 +197,7 @@ abstract class Spray extends CI_Controller {
 		if($this->_auth_key != NULL && $this->session_model->exists_session_id($this->_auth_key)) {
 			// 로그인 한 사용자의 정보를 가져온다.
 			$this->bu_session = $this->session_model->get_userdata($this->_auth_key);
-		} elseif(in_array($this->router->fetch_class(), $this->public_cmd) === FALSE) {
+		} elseif($this->ptype != 'guest') {
 			// 로그인이 필요한 전문인 경우 로그인 요청을 한다.
 			$this->responseCode = 9997;
 			$this->responseMessage = '로그인이 필요합니다.';

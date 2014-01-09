@@ -186,6 +186,20 @@ class Spray_model extends CI_Model {
 		
 		return $this;
 	}
+
+    /**
+     * distinct 부분을 설정 한다.
+     *
+     * @access  public
+     * @param   string or array
+     * @return  object
+     */
+	public function set_distinct($val = TRUE)
+	{
+		$this->_rodb->distinct($val);
+		
+		return $this;
+	}
 	
 	 /**
      * 검색 limit을 설정 한다.
@@ -217,6 +231,35 @@ class Spray_model extends CI_Model {
 		return $this;
 	}
 	
+    /**
+     * group by 부분을 설정 한다.
+     *
+     * @access  public
+     * @param   string or array
+     * @return  object
+     */
+	public function set_group_by($by)
+	{
+		$this->_rodb->group_by($by);
+		
+		return $this;
+	}
+	
+    /**
+     * Having을 설정 한다.
+     *
+     * @access  public
+     * @param   string or array $key
+     * @param   string $value
+     * @return  boolean $escape
+     */
+	public function set_having($key, $value = '', $escape = TRUE)
+	{
+		$this->_rodb->having($key, $value, $escape);
+		
+		return $this;
+	}
+		
     /**
      * 검색 조건에 해당하는 전체 데이터를 배열 행태로 반환 한다.
      *

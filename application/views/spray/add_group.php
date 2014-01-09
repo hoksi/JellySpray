@@ -54,6 +54,6 @@
 	</form>
 <?php else: ?>
 	<script>
-		// document.location.replace('/spray/cmd_list');
+		document.location.replace('/spray/cmd_list');
 	</script>
 <?php endif; ?>	

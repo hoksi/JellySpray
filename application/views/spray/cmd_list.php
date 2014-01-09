@@ -2,10 +2,12 @@
 	<a class="btn btn-primary" href="<?php echo $base_url?>/add_group">Add group</a>
 	<a class="btn btn-default" href="">테스트용 세션키 설정</a>
 </p>
+
 <table class="table table-bordered table-hover">
 <thead>
 	<tr>
 		<th>Group</th>
+		<th>Perm</th>
 		<th>Code</th>
 		<th>API</th>
 		<th>Comment</th>
@@ -13,19 +15,20 @@
 	</tr>
 </thead>
 <?php foreach($data['groups'] as $group): ?>
-<?php if($group['name'] == $segment[0]):?>
+	<?php if($group['name'] == $segment[0]):?>
 	<tr class="active">
-<?php else:?>
+	<?php else:?>
 	<tr>
-<?php endif ?>
+	<?php endif ?>
 		<td><a class="btn btn-link" href="<?php echo $self;?>/<?php echo $group['name']?>"><?php echo $group['name'] . '(' . $group['len'] . ')'; ?></a></td>
+		<td><?php // echo $group['ptype']; ?></td>
 		<td></td>
 		<td></td>
-		<td></td>
+		<td><?php echo $group['desc']; ?></td>
 		<td>
-<?php if($group['name'] == $segment[0]):?>
+	<?php if($group['name'] == $segment[0]):?>
 			<a class="btn btn-link" onclick="add_command('<?php echo $group['name']?>')">전문추가</a>
-<?php endif ?>			
+	<?php endif ?>
 			<a class="btn btn-link" onclick="rename_group('<?php echo $group['name']?>')">이름변경</a>
 			<a class="btn btn-link" onclick="delete_group('<?php echo $group['name']?>')">삭제</a>
 		</td>
@@ -34,10 +37,11 @@
 		<?php foreach($group['command'] as $cmd):?>
 	<tr class="active">
 		<td></td>
-		<td><a class="btn btn-default" href="/<?php echo $group['name']?>/<?php echo $cmd; ?>/test/<?php echo $this->bu_session['test_session_key']?>" target="_blank"><?php echo $cmd; ?></a></td>
-		<td><?php echo base_url($group['name'] . '/' . $cmd); ?>/json</td>
-		<td></td>
-		<td><a class="btn btn-link" onclick="delete_command('<?php echo $group['name']?>', '<?php echo $cmd?>')">삭제</a></td>
+		<td><?php echo $cmd['ptype']; ?></td>
+		<td><a class="btn btn-default" href="/<?php echo $group['name']?>/<?php echo $cmd['name']; ?>/test/<?php echo $cmd['ptype'] != 'guest' ? $this->bu_session['test_session_key'] : ''; ?>" target="_blank"><?php echo $cmd['name']; ?></a></td>
+		<td><?php echo base_url($group['name'] . '/' . $cmd['name']); ?>/json<?php echo $cmd['ptype'] != 'guest' ? '/{session_key}' : ''; ?></td>
+		<td><?php echo $cmd['desc']; ?></td>
+		<td><a class="btn btn-link" onclick="delete_command('<?php echo $group['name']?>', '<?php echo $cmd['name']?>')">삭제</a></td>
 	</tr>
 		<?php endforeach; ?>
 	<?php endif; ?>
