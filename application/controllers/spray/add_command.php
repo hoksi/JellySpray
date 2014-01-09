@@ -18,16 +18,15 @@ class Add_command extends Jelly {
 	
 	public function run($group = NULL)
 	{
-		$this->data = array('command_name' => $this->input->post('command_name'));
-
 		if($this->validation($group)) {
-			if($this->add_command_model->add_command($group, $this->post_data['command_name'], $this->post_data['v_config'])) {
+			if($this->add_command_model->add_command($group, $this->post_data)) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add command success';
 			} else {
 				$this->responseCode = 3;
-				$this->responseMessage = '이미 존재하는 전문 입니다.';
-				$this->data['vconfig'] = isset($this->post_data['v_config']) ? $this->post_data['v_config'] : NULL;
+				$this->responseMessage = '사용 불가능한 전문명 입니다.';
+
+				$this->data = $this->post_data;
 			}
 		}
 		
@@ -40,33 +39,40 @@ class Add_command extends Jelly {
 
 		// validation 조건 확인
 		$config = array(
-				array( 'field' => 'command_name', 'label' => 'CommandName', 'rules' => 'required|xss_clean')
+				array( 'field' => 'command_name', 'label' => 'CommandName', 'rules' => 'required|xss_clean|alpha_dash'),
+				array( 'field' => 'ptype', 'label' => 'Ptype', 'rules' => 'required|xss_clean')
 		);
+
+		$this->post_data = array(
+			'command_name' => strtolower($this->input->post('command_name')),
+			'ptype' => $this->input->post('ptype'),
+			'desc' => $this->input->post('desc'),
+			'default_errmsg' => $this->input->post('default_errmsg')
+		);
+
+		$item_len = (int) $this->input->post('item_len');
+		if($item_len > 0) {
+			for($i=1; $i <= $item_len; $i++) {
+				if($fname = strtolower($this->input->post('item' . $i))) {
+					$opt = '';
+					for($j=1; $j <= 4; $j++) {
+						$opt .= ($this->input->post('item' . $i . '_opt' . $j) . '|');
+					}
+					$this->post_data['v_config'][] = array(
+						'field' => $fname,
+						'label' => ucfirst($fname),
+						'rules' => rtrim(str_replace('||', '|', $opt), '|'),
+						'err_msg' => $this->input->post('item' . $i . '_errmsg')
+					);
+				}
+			}
+		}
 
 		if($this->form_chk($config)) {
 			if($group) {
-				$this->post_data = array(
-					'command_name' => $this->input->post('command_name')
-				);
-				
-				$item_len = (int) $this->input->post('item_len');
-				for($i=1; $i <= $item_len; $i++) {
-					if($fname = $this->input->post('item' . $i)) {
-						$opt = '';
-						for($j=1; $j <= 4; $j++) {
-							$opt .= ($this->input->post('item' . $i . '_opt' . $j) . '|');
-						}
-						$this->post_data['v_config'][] = array(
-							'field' => $fname,
-							'label' => ucfirst($fname),
-							'rules' => rtrim(str_replace('||', '|', $opt), '|')
-						);
-					}
-				}
-				
 				$ret = TRUE;
 			} else {
-				$this->responseCode = 2;
+				$this->responseCode = 3;
 				$this->responseMessage = '전문을 추가할 그룹명 누락';
 			}
 		} else {
@@ -75,12 +81,18 @@ class Add_command extends Jelly {
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'CommandName')) {
 					$this->responseCode = 1;
-					$err = '새로운 전문이름을 입력하세요.';
+					$err = '전문명을 확인 하세요.';
+					break;
+				}
+				if(strstr($err, 'Ptype')) {
+					$this->responseCode = 2;
+					$err = '접근 권한을 설정 하세요.';
 					break;
 				}
 			}
 
 			$this->responseMessage = $err ? $err : '새로운 전문을 추가 합니다.';
+			$this->data = $this->post_data;
 		}
 
 		return $ret;

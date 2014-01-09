@@ -1,7 +1,7 @@
 <script>
 <?php if($responseCode != 0): ?>
-alert('그룹명 누락');
+alert('<?php echo $responseMessage; ?>');
 <?php endif; ?>
-document.location.replace('/spray/cmd_list');
+document.location.replace('/spray/cmd_list/<?php echo $segment[0]?>');
 </script>
 	

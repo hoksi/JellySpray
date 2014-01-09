@@ -62,49 +62,6 @@ class Spray_commands_model extends MY_Model {
 		return $ret;
 	}
 	
-	public function delete_group($group_name, $remove_all = FALSE)
-	{
-		$ret = FALSE;
-		
-		if($this->_exists_group($group_name)) {
-			// Controller group
-			$group = $this->spray_dir . $group_name;
-			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
-
-			// Model group
-			$group = $this->spray_model_dir . $group_name;
-
-			// Default model file remove
-			$model_file = $group . '/default_model.php';
-			if(file_exists($model_file)) {
-				unlink($model_file);
-			}
-			
-			// Model group remove
-			$ret = ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
-			
-			// View group
-			$group = $this->spray_view_dir . $group_name;
-			$ret = $ret && ($remove_all == TRUE ? $this->_remove_all($group) : @rmdir($group));
-		}
-		
-		return $ret;
-	}
-	
-	public function delete_command($group_name, $command_name)
-	{
-		$ret = FALSE;
-		
-		if($this->_exists_command($group_name, $command_name)) {
-			$command = $this->spray_dir . $group_name . '/' . $command_name . '.php';
-			$ret = unlink($command);
-			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
-			$ret = unlink($command);
-		}
-		
-		return $ret;
-	}
-
 	private function _exists_group($group_name)
 	{
 		return file_exists($this->spray_dir . $group_name) 

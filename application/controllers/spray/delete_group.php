@@ -10,19 +10,23 @@ class Delete_group extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->load->model('spray/spray_commands_model');
-		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
+		$this->load->model('spray/delete_group_model');
+		if(FALSE) $this->delete_group_model = new Delete_group_model;
 	}
 	
 	public function run($group = NULL)
 	{
 		if($this->validation($group)) {
-			$this->responseCode = 0;
-			$this->responseMessage = 'Delete Group Success';
-			$this->spray_commands_model->delete_group($group);
+			if($this->delete_group_model->delete_group($group)) {
+				$this->responseCode = 0;
+				$this->responseMessage = 'Delete Group Success';
+			} else {
+				$this->responseCode = 2;
+				$this->responseMessage = '전문이 모두 삭제 되지 않았습니다.';
+			}
 		} else {
 			$this->responseCode = 1;
-			$this->responseMessage = '그룹명 누락';
+			$this->responseMessage = '존재하지 않는 그룹';
 		}
 		return $this->get_res();
 	}

@@ -10,19 +10,20 @@ class Delete_command extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->load->model('spray/spray_commands_model');
-		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
+		$this->load->model('spray/delete_command_model');
+		if(FALSE) $this->delete_command_model = new Delete_command_model;
 	}
 	
 	public function run($group = NULL, $command = NULL)
 	{
 		if($this->validation($group, $command)) {
+			$this->delete_command_model->delete_command($group, $command);
+
 			$this->responseCode = 0;
 			$this->responseMessage = 'Delete command Success';
-			$this->spray_commands_model->delete_command($group, $command);
 		} else {
 			$this->responseCode = 1;
-			$this->responseMessage = '그룹명 누락';
+			$this->responseMessage = '삭제 할 수 없습니다.';
 		}
 		return $this->get_res();
 	}

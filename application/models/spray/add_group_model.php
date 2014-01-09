@@ -42,14 +42,14 @@ class Add_group_model extends MY_Model {
 			if($data['crud_create'] == 'Y') {}
 			
 			if($ret) {
-				$this->add_spray_command($data);
+				$this->add_spray_group($data);
 			}
 		}
 		
 		return $ret;
 	}
 	
-	public function add_spray_command($post_data)
+	public function add_spray_group($post_data)
 	{
 		$data = array(
 			'group_name' => $post_data['group_name'],
@@ -66,7 +66,6 @@ class Add_group_model extends MY_Model {
 	
 	public function validation_group_name($group_name)
 	{
-		
 		return $this->set_table($this->table)->set_where('group_name', $group_name)->get_count() == 0 
 			&& $this->set_table($this->word_tbl)->set_where('word', $group_name)->get_count() == 0
 			&& !file_exists($this->spray_controller_dir . $group_name) 
