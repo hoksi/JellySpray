@@ -12,11 +12,11 @@ class Fwrite extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
+		$this->load->model('feed/fwrite_model');
 		
 		$this->post_data = array();
 		
-		if(FALSE) $this->default_model = new Default_model;
+		if(FALSE) $this->fwrite_model = new Fwrite_model;
 	}
 	
 	public function run($group = NULL)
@@ -25,7 +25,7 @@ class Fwrite extends Spray {
 			$this->responseCode = 0;
 			$this->responseMessage = 'Feed가 등록 되었습니다.';
 			
-			$this->default_model->add_feed($this->post_data);
+			$this->fwrite_model->fwrite($this->post_data);
 		}
 		
 		return $this->get_res();

@@ -12,9 +12,9 @@ class Flist extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
+		$this->load->model('feed/flist_model');
 		$this->post_data = array();
-		if(FALSE) $this->default_model = new Default_model;
+		if(FALSE) $this->flist_model = new Flist_model;
 	}
 	
 	public function run($group = NULL)
@@ -23,7 +23,7 @@ class Flist extends Spray {
 			$this->responseCode = 0;
 			$this->responseMessage = 'Feed list';
 			
-			$this->data = array('feed' => $this->default_model->get_page($this->post_data['page'], 20));
+			$this->data = array('feed' => $this->flist_model->flist($this->post_data['page'], 20));
 			$this->data['next_page'] = count($this->data['feed']) == 20 ? $this->post_data['page'] + 1 : '';
 		}
 		

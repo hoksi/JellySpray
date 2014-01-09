@@ -12,17 +12,17 @@ class Cwrite extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('comment/cwrite_model');
+		if(FALSE) $this->cwrite_model = new Cwrite_model;
 	}
 	
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
+			$this->cwrite_model->cwrite($this->post_data);
+
 			$this->responseCode = 0;
 			$this->responseMessage = '댓글이 등록 되었습니다.';
-			
-			$this->default_model->add_comment($this->post_data);
 		}
 		
 		return $this->get_res();
@@ -39,13 +39,18 @@ class Cwrite extends Spray {
 		);
 
 		if($this->form_chk($config)) {
-			$this->post_data = array(
-				'fid' => $this->input->post('fid'),
-				'content' => $this->input->post('content'),
-				'fimg' => $this->do_upload('fimg', 'upload')
-			);
-
-			$ret = TRUE;
+			if($this->cwrite_model->exists_feed($this->input->post('fid'))) {
+				$this->post_data = array(
+					'fid' => $this->input->post('fid'),
+					'content' => $this->input->post('content'),
+					'fimg' => $this->do_upload('fimg', 'upload')
+				);
+	
+				$ret = TRUE;
+			} else {
+				$this->responseCode = 3;
+				$this->responseMessage = '존재하지 않거나 삭제된 Feed 입니다.';
+			}
 		} else {
 			$this->responseCode = -1;
 			

@@ -12,8 +12,8 @@ class Add_command extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->load->model('spray/spray_commands_model');
-		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
+		$this->load->model('spray/add_command_model');
+		if(FALSE) $this->add_command_model = new Add_command_model;
 	}
 	
 	public function run($group = NULL)
@@ -21,7 +21,7 @@ class Add_command extends Jelly {
 		$this->data = array('command_name' => $this->input->post('command_name'));
 
 		if($this->validation($group)) {
-			if($this->spray_commands_model->add_command($group, $this->post_data['command_name'], $this->post_data['v_config'])) {
+			if($this->add_command_model->add_command($group, $this->post_data['command_name'], $this->post_data['v_config'])) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add command success';
 			} else {
@@ -30,7 +30,6 @@ class Add_command extends Jelly {
 				$this->data['vconfig'] = isset($this->post_data['v_config']) ? $this->post_data['v_config'] : NULL;
 			}
 		}
-		
 		
 		return $this->get_res();
 	}

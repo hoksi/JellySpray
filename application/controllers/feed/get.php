@@ -12,14 +12,14 @@ class Get extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('feed/get_model');
+		if(FALSE) $this->get_model = new Get_model;
 	}
 	
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			$this->data = $this->default_model->get_feed($this->post_data['fid']);
+			$this->data = $this->get_model->get($this->post_data['fid']);
 			if(!empty($this->data)) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Feed Detail';

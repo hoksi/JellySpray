@@ -12,20 +12,23 @@ class Clist extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('comment/clist_model');
+		if(FALSE) $this->clist_model = new Clist_model;
 	}
 	
 	public function run()
 	{
 		if($this->validation()) {
+			$len = 20;
+			$ret = $this->clist_model->clist($this->post_data['fid'], $this->post_data['page'], $len);
+			
 			$this->responseCode = 0;
 			$this->responseMessage = '댓글 목록 조회';
 			
 			$this->data = array(
-				'comments' => $this->default_model->get_comment_page($this->post_data['fid'], $this->post_data['page'], 20)
+				'comments' => $ret,
+				'next' => count($ret) == $len ? $this->post_data['page'] + 1 : ''
 			);
-			$this->data['next'] = count($this->data['comments']) == 20 ? $this->post_data['page'] + 1 : '';
 		}
 		
 		return $this->get_res();

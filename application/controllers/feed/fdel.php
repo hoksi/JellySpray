@@ -12,17 +12,20 @@ class Fdel extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('feed/fdel_model');
+		if(FALSE) $this->fdel_model = new Fdel_model;
 	}
 	
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			$this->responseCode = 0;
-			$this->responseMessage = 'Feed 삭제';
-			
-			$this->default_model->del_feed($this->post_data['fid']);
+			if($this->fdel_model->fdel($this->post_data['fid'])) {
+				$this->responseCode = 0;
+				$this->responseMessage = 'Feed 삭제';
+			} else {
+				$this->responseCode = 2;
+				$this->responseMessage = '삭제 되었거나 삭제 권한이 없습니다.';
+			}
 		}
 		
 		return $this->get_res();

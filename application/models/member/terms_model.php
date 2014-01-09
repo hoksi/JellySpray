@@ -1,15 +1,15 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Default_model extends MY_Model {
-	private $table = NULL;
-	
+class Terms_model extends MY_Model {
+	public $table = NULL;
+
 	public function __construct()
 	{
 		parent::__construct();
 		
-		$this->table = 'feed';
+		$this->table = 'member';
 	}
 	
-	public function defaunt($data)
+	public function terms($data)
 	{
 		return $data;
 	}

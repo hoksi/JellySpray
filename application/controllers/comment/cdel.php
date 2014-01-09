@@ -12,17 +12,22 @@ class Cdel extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('comment/cdel_model');
+		if(FALSE) $this->cdel_model = new Cdel_model;
 	}
 	
 	public function run()
 	{
 		if($this->validation()) {
-			$this->responseCode = 0;
-			$this->responseMessage = '삭제 성공';
+			if($this->cdel_model->cdel($this->post_data['cid'])) {
+				$this->responseCode = 0;
+				$this->responseMessage = '삭제 성공';
+			} else {
+				$this->responseCode = 2;
+				$this->responseMessage = '삭제 되었거나 삭제 권한이 없습니다.';
+			}
+			
 
-			$this->default_model->del_comment($this->post_data['cid']);
 		}
 		
 		return $this->get_res();

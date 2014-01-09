@@ -12,8 +12,8 @@ class Flike extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('feed/flike_model');
+		if(FALSE) $this->flike_model = new Flike_model;
 	}
 	
 	public function run($group = NULL)
@@ -22,7 +22,7 @@ class Flike extends Spray {
 			$this->responseCode = 0;
 			$this->responseMessage = 'Feed 좋아요';
 			
-			$this->default_model->feed_like($this->post_data['fid']);
+			$this->flike_model->flike($this->post_data['fid']);
 		}
 		
 		return $this->get_res();

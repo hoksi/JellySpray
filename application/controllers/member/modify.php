@@ -22,7 +22,10 @@ class modify extends Spray {
 	{
 		parent::__construct();
 
-		$this->load->model('mysql/member_model');
+		$this->load->model('member/modify_model');
+		$this->load->model('member/regist_model');
+		if(FALSE) $this->modify_model = new Modify_model;		
+		if(FALSE) $this->regist_model = new Regist_model;		
 	}
 
 	/**
@@ -33,9 +36,6 @@ class modify extends Spray {
 	function run()
 	{
 		if($this->validation()) {
-			$this->responseCode = 0;
-			$this->responseMessage = 'Member Info update';
-
 			/*
 			if($this->post_data['os'] == 'A') {
 				$this->post_data['adevicekey'] = $this->post_data['devicekey'];
@@ -45,7 +45,12 @@ class modify extends Spray {
 			unset($this->post_data['devicekey']);
 			*/
 
-			$this->member_model->update_member($this->bu_session['member_id'], $this->post_data);
+			if($this->modify_model->modify($this->bu_session['member_id'], $this->post_data)) {
+				$this->responseCode = 0;
+				$this->responseMessage = 'Member Info update';
+			} else {
+				
+			}
 		}
 
 		return $this->get_res();
@@ -65,7 +70,7 @@ class modify extends Spray {
 				array( 'field' => 'nickname', 'label' => 'Nickname', 'rules' => 'required')
 		);
 
-		if($this->validation()) {
+		if($this->form_chk($config)) {
 			$this->post_data = array(
 				// 'password' => $this->input->post('password'),
 				'nickname' => $this->input->post('nickname')
@@ -73,25 +78,24 @@ class modify extends Spray {
 			);
 
 			// 등록된 Email인지 검사 한다.
-			if($this->member_model->exists_nickname($this->post_data['nickname'], $this->bu_session['member_id'])){
-				$this->responseCode = 3;
+			if($this->regist_model->exists_nickname($this->post_data['nickname'], $this->bu_session['member_id'])){
+				$this->responseCode = 2;
 				$this->responseMessage = '등록된 NickName 입니다.';
 			} else {
 				$ret = TRUE;
 			}
 		} else {
+			$this->responseCode = -1;
+			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Nickname')) {
 					$this->responseCode = 1;
 					$err = 'Nickname 누락';
 					break;
-				} else {
-					$this->responseCode = 1;
-					$err = validation_errors();
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '데이터가 입력되지 않았습니다.';
 		}
 
 		return $ret;

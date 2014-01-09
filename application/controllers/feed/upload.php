@@ -12,8 +12,8 @@ class Upload extends Spray {
 	{
 		parent::__construct();
 		
-		$this->load->model('feed/default_model');
-		if(FALSE) $this->default_model = new Default_model;
+		$this->load->model('feed/upload_model');
+		if(FALSE) $this->upload_model = new Upload_model;
 	}
 	
 	public function run($group = NULL)
@@ -22,7 +22,7 @@ class Upload extends Spray {
 			$this->responseCode = 0;
 			$this->responseMessage = '파일이 업로드 되었습니다.';
 			
-			$this->default_model->add_file($this->post_data['fimg'], 'ready');
+			$this->upload_model->upload($this->post_data['fimg'], 'ready');
 		}
 		
 		return $this->get_res();

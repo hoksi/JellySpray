@@ -38,35 +38,6 @@ class Spray_commands_model extends MY_Model {
 		return array_key_exists($group, $this->spray_cmd_list) ? $this->spray_cmd_list[$group]['command'] : NULL;
 	}
 	
-	public function add_group($group_name, $create_model)
-	{
-		$ret = FALSE;
-		
-		if(!$this->_exists_group($group_name)) {
-			// Controller group
-			$group = $this->spray_dir . $group_name;
-			$ret = @mkdir($group);
-
-			// Model group
-			$group = $this->spray_model_dir . $group_name;
-			$ret = @mkdir($group);
-			
-			// Default Model create
-			if($create_model == 'Y') {
-				$model_file = $group . '/default_model.php';
-				$template = $this->get_template('default', 'model');
-				$content = str_replace('{table}', $group_name, $template['content']);
-				file_put_contents($model_file, $content);
-			}
-
-			// View group
-			$group = $this->spray_view_dir . $group_name;
-			$ret = $ret && @mkdir($group);
-		}
-		
-		return $ret;
-	}
-	
 	public function rename_group($org_group_name, $new_group_name)
 	{
 		$ret = FALSE;
@@ -120,65 +91,6 @@ class Spray_commands_model extends MY_Model {
 		return $ret;
 	}
 	
-	public function add_command($group_name, $command_name, $vconfig = NULL)
-	{
-		$ret = FALSE;
-		
-		$finfo = explode('.', $command_name);
-		$command_name = $finfo[0];
-		if($command_name != NULL && !$this->_exists_command($group_name, $command_name)) {
-			// Controller file create
-			$command = $this->spray_dir . $group_name . '/' . $command_name . '.php';
-			$template = $this->get_template('default', 'controller');
-			$v_str = '';
-			$d_str = '';
-			$e_str = '';
-			$err_code = 1;
-			foreach($vconfig as $vitem) {
-				$v_str .= 'array(';
-				$v_str .= "'field' => '{$vitem['field']}', ";
-				$v_str .= "'label' => '{$vitem['label']}', ";
-				$v_str .= "'rules' => '{$vitem['rules']}' ";
-				$v_str .= '),' . "\n\t\t\t";
-				
-				$d_str .= "'{$vitem['field']}' => \$this->input->post('{$vitem['field']}'),\n\t\t\t\t";
-				
-				$e_str .= "if(strstr(\$err, '{$vitem['label']}')) {\n";
-				$e_str .= "\t\t\t\t\t\$this->responseCode = {$err_code};\n";
-				$e_str .= "\t\t\t\t\tbreak;\n";
-				$e_str .= "\t\t\t\t}\n\t\t\t\t";
-				$err_code++;
-			}
-			$parser = array('{class_name}', '{group_name}', '{validation}', '{post_data}', '{err_code}', '{command_name}');
-			$pval = array(ucfirst($command_name), $group_name, rtrim($v_str), rtrim($d_str), rtrim($e_str), $command_name);
-			$content = str_replace($parser, $pval, $template['content']);
-			$ret = file_put_contents($command, $content);
-
-			// View file create
-			$command = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
-			$template = $this->get_template('default', 'view');
-
-			$v_str = '';
-			foreach($vconfig as $vitem) {
-				$v_str .= "\t<tr>\n";
-				$v_str .= "\t\t<td>{$vitem['field']}</td>\n";
-				$v_str .= "\t\t<td><input type=\"text\" name=\"{$vitem['field']}\" value=\"\" id=\"{$vitem['field']}\" /></td>\n";
-				if(strstr($vitem['rules'], 'required')) {
-					$v_str .= "\t\t<td>필수입력</td>\n";
-				} else {
-					$v_str .= "\t\t<td></td>\n";
-				}
-				$v_str .= "\t</tr>\n";
-			}
-			$parser = array('{field_list}');
-			$pval = array(rtrim($v_str));
-			$content = str_replace($parser, $pval, $template['content']);
-			$ret = file_put_contents($command, $content);
-		}
-		
-		return $ret;
-	}
-
 	public function delete_command($group_name, $command_name)
 	{
 		$ret = FALSE;
@@ -193,15 +105,6 @@ class Spray_commands_model extends MY_Model {
 		return $ret;
 	}
 
-	public function get_template($name, $type)
-	{
-		return $this->set_table($this->t_table)
-			->set_select('content')
-			->set_where('name', $name)
-			->set_where('type', $type)
-			->get_one();
-	}
-	
 	private function _exists_group($group_name)
 	{
 		return file_exists($this->spray_dir . $group_name) 
@@ -210,12 +113,6 @@ class Spray_commands_model extends MY_Model {
 			   && is_dir($this->spray_model_dir . $group_name)
 			   && file_exists($this->spray_view_dir . $group_name)
 			   && is_dir($this->spray_view_dir . $group_name);
-	}
-	
-	private function _exists_command($group_name, $command)
-	{
-		return file_exists($this->spray_dir . $group_name . '/' . $command . '.php') 
-			   && file_exists($this->spray_view_dir . $group_name . '/' . $command . '.php');
 	}
 	
 	private function _remove_all($dir)

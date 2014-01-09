@@ -22,7 +22,9 @@ class Login extends Spray {
 	{
 		parent::__construct();
 
-		$this->load->model('mysql/member_model');
+		$this->load->model('member/login_model');
+		
+		if(FALSE) $this->login_model = new Login_model;
 	}
 
 	/**
@@ -33,13 +35,10 @@ class Login extends Spray {
 	public function run()
 	{
 		if($this->validation()) {
-			$row = $this->member_model->get_id_password($this->post_data['email']);
+			$row = $this->login_model->login($this->post_data['email']);
 
 			if(isset($row['password']) && $row['password'] == $this->post_data['password']) {
-				$this->responseCode = 0;
-				$this->responseMessage = 'Member Login';
-				
-				$this->member_model->update_last_login($row['member_id']);
+				$this->login_model->update_last_login($row['member_id']);
 
 				$session_id = md5($row['password'] . $row['member_id'] . $row['auth_date']);
 				$data = array(
@@ -55,6 +54,9 @@ class Login extends Spray {
 					'nickname' => $row['nickname'],
 					'auth' => $session_id
 				);
+
+				$this->responseCode = 0;
+				$this->responseMessage = 'Login 성공';
 			} else {
 				$this->responseCode = 3;
 				$this->responseMessage = '등록되지 않은 Email 이거나 비밀번호 오류';
@@ -76,7 +78,7 @@ class Login extends Spray {
 		// validation 조건 확인
 		$config = array(
 				array( 'field' => 'email', 'label' => 'Email', 'rules' => 'required|valid_email|trim|xss_clean'),
-				array( 'field' => 'password', 'label' => 'Password', 'rules' => 'required')
+				array( 'field' => 'password', 'label' => 'Password', 'rules' => 'required|trim|xss_clean')
 		);
 
 		if($this->form_chk($config)) {
@@ -95,7 +97,6 @@ class Login extends Spray {
 			$ret = TRUE;
 		} else {
 			$this->responseCode = -1;
-			$err = validation_errors();
 			
 			foreach($this->error_chk() as $err) {
 				if(strstr($err, 'Email')) {
@@ -111,7 +112,7 @@ class Login extends Spray {
 				}
 			}
 
-			$this->responseMessage = $err;
+			$this->responseMessage = $err ? $err : '데이터가 입력되지 않았습니다.';
 		}
 
 		return $ret;

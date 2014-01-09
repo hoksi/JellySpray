@@ -12,19 +12,23 @@ class Add_group extends Jelly {
 	{
 		parent::__construct();
 		
-		$this->load->model('spray/spray_commands_model');
-		if(FALSE) $this->spray_commands_model = new Spray_commands_model;
+		$this->output->enable_profiler();
+		
+		$this->load->model('spray/add_group_model');
+		if(FALSE) $this->add_group_model = new Add_group_model;
 	}
 	
 	public function run($group = NULL)
 	{
 		if($this->validation()) {
-			if($this->spray_commands_model->add_group($this->post_data['group_name'], $this->post_data['model_create'])) {
+			if($this->add_group_model->add_group($this->post_data)) {
 				$this->responseCode = 0;
 				$this->responseMessage = 'Add group success';
 			} else {
 				$this->responseCode = 3;
-				$this->responseMessage = '이미 존재하는 그룹 입니다.';
+				$this->responseMessage = '사용 불가능한 그룹명 입니다.';
+				
+				$this->data = $this->post_data;
 			}
 		}
 		
@@ -37,13 +41,16 @@ class Add_group extends Jelly {
 
 		// validation 조건 확인
 		$config = array(
-				array( 'field' => 'group_name', 'label' => 'GroupName', 'rules' => 'required|xss_clean')
+				array( 'field' => 'group_name', 'label' => 'GroupName', 'rules' => 'required|xss_clean|alpha_dash'),
+				array( 'field' => 'ptype', 'label' => 'Ptype', 'rules' => 'required|xss_clean'),
 		);
 
 		if($this->form_chk($config)) {
 			$this->post_data = array(
-				'group_name' => $this->input->post('group_name'),
-				'model_create' => $this->input->post('default_model_create')
+				'group_name' => strtolower($this->input->post('group_name')),
+				'ptype' => $this->input->post('ptype'),
+				'crud_create' => $this->input->post('crud_create'),
+				'desc' => $this->input->post('desc')
 			);
 
 			$ret = TRUE;
@@ -54,6 +61,11 @@ class Add_group extends Jelly {
 				if(strstr($err, 'GroupName')) {
 					$this->responseCode = 1;
 					$err = '신규 그룹이름을 입력하세요.';
+					break;
+				}
+				if(strstr($err, 'Ptype')) {
+					$this->responseCode = 2;
+					$err = '접근 권한을 설정 하세요.';
 					break;
 				}
 			}
