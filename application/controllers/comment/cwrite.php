@@ -43,7 +43,7 @@ class Cwrite extends Spray {
 				$this->post_data = array(
 					'fid' => $this->input->post('fid'),
 					'content' => $this->input->post('content'),
-					'fimg' => $this->do_upload('fimg', 'upload')
+					'fimg' => $this->do_upload('fimg', './upload')
 				);
 	
 				$ret = TRUE;

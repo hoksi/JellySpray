@@ -127,16 +127,20 @@ abstract class Spray extends CI_Controller {
 	 */
 	public function test()
 	{
-		if($this->ptype == 'public' || $this->session_model->exists_session_id($this->_auth_key)) {
-			$params = array(
-				'spray_dir' => $this->uri->segment(1),
-				'command' => $this->router->fetch_class(), 
-				'auth' => $this->_auth_key
-			);
-			
-			$this->load->view('spray/spray_test', $params);
+		if($this->config->item('debug_mode')) {
+			if($this->ptype == 'public' || $this->session_model->exists_session_id($this->_auth_key)) {
+				$params = array(
+					'spray_dir' => $this->uri->segment(1),
+					'command' => $this->router->fetch_class(), 
+					'auth' => $this->_auth_key
+				);
+				
+				$this->load->view($this->config->item('test_view_file'), $params);
+			} else {
+				echo $this->config->item('login_info_message');
+			}
 		} else {
-			echo "<a href='/member/login/test'>Login first!! - Click me</a>";
+			show_404();
 		}
 	}
 
@@ -146,12 +150,16 @@ abstract class Spray extends CI_Controller {
 	 */
 	public function debug()
 	{
-		$this->output->set_profiler_sections(array('config'  => TRUE, 'queries' => TRUE));
-		$this->output->enable_profiler(TRUE);
-		$this->_debug = TRUE;
-		$this->_mode = 'XML';
-
-		$this->_request();
+		if($this->config->item('debug_mode')) {
+			$this->output->set_profiler_sections(array('config'  => TRUE, 'queries' => TRUE));
+			$this->output->enable_profiler(TRUE);
+			$this->_debug = TRUE;
+			$this->_mode = 'XML';
+	
+			$this->_request();
+		} else {
+			show_404();
+		}
 	}
 
 	/**
@@ -209,7 +217,7 @@ abstract class Spray extends CI_Controller {
 
 		if($this->_mode == 'JSON') {
 			$this->output->append_output(json_encode($_data));
-		} elseif($this->_mode == 'XML') $this->load->view('spray/debug', $_data);
+		} elseif($this->_mode == 'XML') $this->load->view($this->config->item('debug_view_file'), $_data);
 		else show_404();
 	}
 
@@ -306,12 +314,12 @@ abstract class Spray extends CI_Controller {
 	 * 
 	 * @return array
 	 */
-    public function do_upload($upfile = 'upfile', $upload_path = NULL, $alloed_types = 'jpg|png', $max_size = 10240) {
+    public function do_upload($upfile = 'upfile', $upload_path = NULL) {
 		 // Uload Config 설정
         $config = array(
             'upload_path' => $upload_path,
-            'allowed_types' => $alloed_types,
-            'max_size' => $max_size,
+            'allowed_types' => $this->config->item('upload_alloed_types'),
+            'max_size' => $this->config->item('upload_max_size'),
             'encrypt_name' => TRUE
         );
          
@@ -329,13 +337,23 @@ abstract class Spray extends CI_Controller {
         return $data;
     }
 	
+	/**
+	 * 썸네일 이미지를 만든다.
+	 * 
+	 * @param string $origin_file
+	 * @param string $target_file
+	 * 
+	 * @return void
+	 */
 	public function make_thumb($origin_file, $target_file)
 	{
 		$this->load->library('image_moo');
 		
+		$tsize = $this->config->item('thumb_size');
+		
 		$this->image_moo
 			 ->load($origin_file)
-			 ->resize_crop(100, 100)
+			 ->resize_crop($tsize['width'], $tsize['height'])
 			 ->save($target_file)
 			 ->clear();
 	}
