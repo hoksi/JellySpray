@@ -53,6 +53,7 @@ class Add_command_model extends MY_Model {
 	{
 		return $this->set_table($this->t_table)
 			->set_select('content')
+			->set_where('group', 'Spray')
 			->set_where('name', $name)
 			->set_where('type', $type)
 			->get_one();
