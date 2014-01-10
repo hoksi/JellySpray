@@ -20,7 +20,7 @@ class Toast_all extends CI_Controller
 {
 	// The folder INSIDE /controllers/ where the test classes are located
 	// TODO: autoset
-	var $test_dir = '/toast/';
+	var $test_dir = '/spray_toast/';
 
 	// Files to skip (ie. non-test classes) inside the test dir
 	var $skip = array(

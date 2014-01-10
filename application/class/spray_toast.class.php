@@ -19,11 +19,12 @@
  */
 
 
-abstract class Toast extends CI_Controller
+abstract class Spray_toast extends CI_Controller
 {
 	// The folder INSIDE /controllers/ where the test classes are located
 	// TODO: autoset
-	var $test_dir = '/toast/';
+	var $test_dir = '/spray_toast/';
+	var $view_dir = 'spray_toast/';
 
 	var $modelname;
 	var $modelname_short;
@@ -51,7 +52,7 @@ abstract class Toast extends CI_Controller
 		$data['modelname'] = $this->modelname;
 		$data['results'] = $this->unit->result();
 		$data['messages'] = $this->messages;
-		$this->load->view('toast/results', $data);
+		$this->load->view($this->view_dir . 'results', $data);
 	}
 
 	function _show_all()
@@ -61,9 +62,9 @@ abstract class Toast extends CI_Controller
 		$data['results'] = $this->unit->result();
 		$data['messages'] = $this->messages;
 
-		$this->load->view('toast/header');
-		$this->load->view('toast/results', $data);
-		$this->load->view('toast/footer');
+		$this->load->view($this->view_dir . 'header');
+		$this->load->view($this->view_dir . 'results', $data);
+		$this->load->view($this->view_dir . 'footer');
 	}
 
 	function _show($method)
@@ -73,9 +74,9 @@ abstract class Toast extends CI_Controller
 		$data['results'] = $this->unit->result();
 		$data['messages'] = $this->messages;
 
-		$this->load->view('toast/header');
-		$this->load->view('toast/results', $data);
-		$this->load->view('toast/footer');
+		$this->load->view($this->view_dir . 'header');
+		$this->load->view($this->view_dir . 'results', $data);
+		$this->load->view($this->view_dir . 'footer');
 	}
 
 	function _run_all()

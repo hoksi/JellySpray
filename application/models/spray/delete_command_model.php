@@ -5,6 +5,7 @@ class Delete_command_model extends MY_Model {
 	private $spray_model_dir = NULL;
 	private $spray_view_dir = NULL;
 	private $spray_controller_dir = NULL;
+	private $toast_dir = NULL;
 	
 	public function __construct()
 	{
@@ -14,7 +15,8 @@ class Delete_command_model extends MY_Model {
 		
 		$this->spray_controller_dir = APPPATH . 'controllers/';
 		$this->spray_view_dir = APPPATH . 'views/';
-		$this->spray_model_dir = APPPATH . 'models/'; 
+		$this->spray_model_dir = APPPATH . 'models/';
+		$this->toast_dir = $this->spray_controller_dir . 'spray_toast/';
 	}
 	
 	public function delete_command($group_name, $command_name)
@@ -25,6 +27,8 @@ class Delete_command_model extends MY_Model {
 			$file_name = $this->spray_controller_dir . $group_name . '/' . $command_name . '.php';
 			$ret = unlink($file_name);
 			$file_name = $this->spray_model_dir . $group_name . '/' . $command_name . '_model.php';
+			$ret = $ret && unlink($file_name);
+			$file_name = $this->toast_dir . $group_name . '_' . $command_name . '_model_tests.php';
 			$ret = $ret && unlink($file_name);
 			$file_name = $this->spray_view_dir . $group_name . '/' . $command_name . '.php';
 			$ret = $ret && unlink($file_name);

@@ -1,5 +1,5 @@
 <?php
-class Toast_tests extends Toast
+class Toast_tests extends Spray_toast
 {
 	function __construct()
 	{

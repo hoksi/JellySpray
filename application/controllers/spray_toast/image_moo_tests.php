@@ -1,5 +1,5 @@
 <?php
-class Image_moo_tests extends Toast
+class Image_moo_tests extends Spray_oast
 {
 	private $org_img, $thumb_dir;
 	

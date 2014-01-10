@@ -7,7 +7,7 @@
 <thead>
 	<tr>
 		<th>Group</th>
-		<th>Code</th>
+		<th>전문테스트</th>
 		<th>API</th>
 		<th>Perm</th>
 		<th>Comment</th>
@@ -38,10 +38,13 @@
 	<tr class="active">
 		<td></td>
 		<td><a class="btn btn-default" href="/<?php echo $group['name']?>/<?php echo $cmd['name']; ?>/test/<?php echo $cmd['ptype'] != 'guest' ? $this->bu_session['test_session_key'] : ''; ?>" target="_blank"><?php echo $cmd['name']; ?></a></td>
-		<td><?php echo base_url($group['name'] . '/' . $cmd['name']); ?>/json<?php echo $cmd['ptype'] != 'guest' ? '/{session_key}' : ''; ?></td>
+		<td><?php echo base_url($group['name'] . '/' . $cmd['name']); ?>/json<?php echo $cmd['ptype'] != 'public' ? '/{session_key}' : ''; ?></td>
 		<td><?php echo $cmd['ptype']; ?></td>
 		<td><?php echo $cmd['desc']; ?></td>
-		<td><a class="btn btn-link" onclick="delete_command('<?php echo $group['name']?>', '<?php echo $cmd['name']?>')">삭제</a></td>
+		<td>
+			<a class="btn btn-link" onclick="delete_command('<?php echo $group['name']?>', '<?php echo $cmd['name']?>')">삭제</a>
+			<a class="btn btn-default" target="_blank" href="<?php echo base_url('spray_toast/' . $group['name'] . '_' . $cmd['name'] . '_model_tests'); ?>">모델테스트</a>
+		</td>
 	</tr>
 		<?php endforeach; ?>
 	<?php endif; ?>

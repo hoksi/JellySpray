@@ -66,6 +66,8 @@ class Add_command extends Jelly {
 					);
 				}
 			}
+		} else {
+			$this->post_data['v_config'] = array();
 		}
 
 		if($this->form_chk($config)) {

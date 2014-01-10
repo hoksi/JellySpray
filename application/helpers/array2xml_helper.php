@@ -21,7 +21,7 @@ if ( ! function_exists('array2xml')) {
 				}
 			}
 		} else {
-			echo str_replace(chr(8), '', $data);
+			echo is_array($data) ? '' : str_replace(chr(8), '', $data);
 		}
 	}
 }

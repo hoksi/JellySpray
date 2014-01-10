@@ -18,7 +18,8 @@ class Add_command_model extends MY_Model {
 		
 		$this->spray_controller_dir = APPPATH . 'controllers/';
 		$this->spray_view_dir = APPPATH . 'views/';
-		$this->spray_model_dir = APPPATH . 'models/'; 
+		$this->spray_model_dir = APPPATH . 'models/';
+		$this->toast_dir = $this->spray_controller_dir . 'spray_toast/';
 	}
 	
 	public function add_command($group_name, $post_data, $template_name = 'default')
@@ -34,6 +35,9 @@ class Add_command_model extends MY_Model {
 			
 			// Model file create
 			$ret = $this->make_model($group_name, $command_name, $vconfig, $template_name);
+
+			// Model test file create (TDD) 
+			$ret = $this->make_test($group_name, $command_name, $vconfig, $template_name);
 			
 			// View file create
 			$ret = $ret && $this->make_view($group_name, $command_name, $vconfig, $template_name);
@@ -104,6 +108,33 @@ class Add_command_model extends MY_Model {
 		return file_put_contents($this->spray_model_dir . $group_name . '/' . $command_name . '_model.php', $this->templeate_parse($template_name, 'model', $data));
 	}
 
+	public function make_test($group_name, $command_name, $vconfig = NULL, $template_name = 'default')
+	{
+		$data_str = "\$data = ";
+		
+		if(!empty($vconfig)) {
+			$data_str .= "array(\n\t\t\t";
+			foreach($vconfig as $vitem) {
+				if(isset($vitem['field']) && isset($vitem['rules'])) {
+					$data_str .= "'{$vitem['field']}' => '{$vitem['field']}',\n\t\t\t";
+				}
+			}
+			$data_str = rtrim($data_str) . "\n\t\t);";
+		} else {
+			$data_str .= "array();\n";
+		}
+		
+		$data = array(
+			'class_name' => ucfirst($group_name),
+			'model_class_name' => ucfirst($command_name),
+			'command_name' => $command_name,
+			'group_name' => $group_name,
+			'test_data' => $data_str
+		); 
+		
+		return file_put_contents($this->toast_dir . $group_name . '_' . $command_name . '_model_tests.php', $this->templeate_parse($template_name, 'toast', $data));
+	}
+	
 	public function make_view($group_name, $command_name, $vconfig = NULL, $template_name = 'default')
 	{
 		$v_str = '';
@@ -131,7 +162,7 @@ class Add_command_model extends MY_Model {
 	
 	public function make_cntroller($group_name, $command_name, $default_errmsg, $vconfig = NULL, $template_name = 'default')
 	{
-		$validation = "\$ret = TRUE;";
+		$validation = "\$ret = TRUE;\n\t\t\$this->post_data = array();\n";
 		
 		if(!empty($vconfig)) {
 			$v_str = '';
