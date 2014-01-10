@@ -7,6 +7,8 @@
 <?php endif; ?>
 
 	<form method="post" role="form" class="form-horizontal">
+	<input type="hidden" name="gid" value="<?php echo isset($data['gid']) ? $data['gid'] : ''; ?>" />
+	<input type="hidden" name="group_name" value="<?php echo isset($data['group_name']) ? $data['group_name'] : ''; ?>" />
 		<table class="table table-bordered">
 		    <thead>
 		    <tr>
@@ -17,8 +19,8 @@
 		    </thead>
 		    <tr>
 		        <td>Group name</td>
-		        <td><input type="text" name="group_name" value="<?php echo isset($data['group_name']) ? $data['group_name'] : ''; ?>" id="group_name" /></td>
-		        <td>(필수)</td>
+		        <td><?php echo isset($data['group_name']) ? $data['group_name'] : ''; ?></td>
+		        <td></td>
 		    </tr>
 		    <tr>
 		        <td>접근권한</td>
@@ -32,11 +34,6 @@
 		        <td>(필수)</td>
 		    </tr>
 		    <tr>
-		        <td>Create CRUD files</td>
-		        <td><input type="checkbox" name="crud_create" value="Y" /></td>
-		        <td>CRUD file을 생성 합니다.</td>
-		    </tr>
-		    <tr>
 		        <td>설명</td>
 		        <td><input type="text" name="desc" value="<?php echo isset($data['desc']) ? $data['desc'] : ''; ?>" id="desc" /></td>
 		        <td>그룹에 대한 설명을 적습니다.</td>
@@ -44,7 +41,7 @@
 			<tr>
 				<td></td>
 				<td>
-					<input type="submit" value="Add" class="btn btn-primary" />
+					<input type="submit" value="수정" class="btn btn-primary" />
 					<a href="/spray/cmd_list" class="btn btn-default">Back</a>
 					
 				</td>
@@ -52,6 +49,9 @@
 			</tr>
 		</table>
 	</form>
+	<script>
+		$('#ptype').val('<?php echo $data['ptype']?>');
+	</script>
 <?php else: ?>
 	<script>
 		document.location.replace('/spray/cmd_list');

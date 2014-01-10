@@ -26,8 +26,8 @@
 		    <tr>
 		        <td>접근권한</td>
 		        <td>
-		        	<select name="ptype">
-		        		<option value="guest">guest</option>
+		        	<select name="ptype" id="ptype">
+		        		<option value="public">public</option>
 		        		<option value="member">member</option>
 		        		<option value="admin">admin</option>
 		        	</select>

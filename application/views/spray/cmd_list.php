@@ -26,7 +26,7 @@
 		<td><?php // echo $group['ptype']; ?></td>
 		<td><?php echo $group['desc']; ?></td>
 		<td>
-			<a class="btn btn-link" onclick="rename_group('<?php echo $group['name']?>')">수정</a>
+			<a class="btn btn-link" onclick="modify_group('<?php echo $group['name']?>')">수정</a>
 			<a class="btn btn-link" onclick="delete_group('<?php echo $group['name']?>')">삭제</a>
 	<?php if($group['name'] == $segment[0]):?>
 			<a class="btn btn-default" onclick="add_command('<?php echo $group['name']?>')">전문추가</a>
@@ -55,10 +55,10 @@
 		}
 	}
 
-	function rename_group(group_name)
+	function modify_group(group_name)
 	{
 		if(confirm('[' + group_name + '] 그룹을 수정 하시겠습니까?')) {
-			document.location.href = '<?php echo $base_url?>/rename_group/' + group_name;
+			document.location.href = '<?php echo $base_url?>/modify_group/' + group_name;
 		}
 	}
 

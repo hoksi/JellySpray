@@ -127,7 +127,7 @@ abstract class Spray extends CI_Controller {
 	 */
 	public function test()
 	{
-		if($this->ptype == 'guest' || $this->session_model->exists_session_id($this->_auth_key)) {
+		if($this->ptype == 'public' || $this->session_model->exists_session_id($this->_auth_key)) {
 			$params = array(
 				'spray_dir' => $this->uri->segment(1),
 				'command' => $this->router->fetch_class(), 
@@ -197,7 +197,7 @@ abstract class Spray extends CI_Controller {
 		if($this->_auth_key != NULL && $this->session_model->exists_session_id($this->_auth_key)) {
 			// 로그인 한 사용자의 정보를 가져온다.
 			$this->bu_session = $this->session_model->get_userdata($this->_auth_key);
-		} elseif($this->ptype != 'guest') {
+		} elseif($this->ptype != 'public') {
 			// 로그인이 필요한 전문인 경우 로그인 요청을 한다.
 			$this->responseCode = 9997;
 			$this->responseMessage = '로그인이 필요합니다.';
