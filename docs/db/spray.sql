@@ -26,7 +26,7 @@ CREATE TABLE `ci_sessions` (
 
 /*Data for the table `ci_sessions` */
 
-insert  into `ci_sessions`(`session_id`,`ip_address`,`user_agent`,`last_activity`,`user_data`) values ('18c8fe6b2c11ac6f5e9bc1d5ff336746','127.0.0.1','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0',1389320241,'a:3:{s:8:\"admin_id\";s:1:\"1\";s:16:\"test_session_key\";s:32:\"d96e825b94954c495a715fddc9c7f58a\";s:5:\"email\";s:11:\"admin@t.com\";}');
+insert  into `ci_sessions`(`session_id`,`ip_address`,`user_agent`,`last_activity`,`user_data`) values ('18c8fe6b2c11ac6f5e9bc1d5ff336746','127.0.0.1','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0',1389331295,'a:3:{s:8:\"admin_id\";s:1:\"1\";s:16:\"test_session_key\";s:32:\"d96e825b94954c495a715fddc9c7f58a\";s:5:\"email\";s:11:\"admin@t.com\";}');
 insert  into `ci_sessions`(`session_id`,`ip_address`,`user_agent`,`last_activity`,`user_data`) values ('d96e825b94954c495a715fddc9c7f58a','127.0.0.1','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0',1389234340,'a:3:{s:9:\"member_id\";s:1:\"2\";s:5:\"email\";s:7:\"t@t.com\";s:8:\"nickname\";s:5:\"test3\";}');
 insert  into `ci_sessions`(`session_id`,`ip_address`,`user_agent`,`last_activity`,`user_data`) values ('l2gagsi4a4cc7bvglvaggegfs2','127.0.0.1','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0',1388479233,'a:2:{s:8:\"admin_id\";s:1:\"1\";s:5:\"email\";s:11:\"admin@t.com\";}');
 insert  into `ci_sessions`(`session_id`,`ip_address`,`user_agent`,`last_activity`,`user_data`) values ('notphifjdfgsfa7h7mg2hqdes1','127.0.0.1','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',1388465185,'a:2:{s:8:\"admin_id\";s:1:\"1\";s:5:\"email\";s:11:\"admin@t.com\";}');
@@ -675,33 +675,33 @@ CREATE TABLE `spray_command` (
   `group_name` varchar(100) DEFAULT NULL COMMENT 'Group name',
   `command` varchar(100) DEFAULT NULL COMMENT 'Command name',
   `stype` enum('group','command') DEFAULT NULL COMMENT 'Type',
-  `ptype` enum('guest','member','admin') DEFAULT NULL COMMENT 'Acl',
+  `ptype` enum('public','member','admin') DEFAULT NULL COMMENT 'Acl',
   `desc` text COMMENT 'Description',
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`spray_command_id`),
   KEY `group_name` (`group_name`),
   KEY `command` (`command`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 
 /*Data for the table `spray_command` */
 
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (1,'comment','','group','guest','댓글 관련 전문','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (2,'feed','','group','guest','Feed 관련 전문','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (3,'member','','group','guest','회원 관련 전문','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (1,'comment','','group','public','댓글 관련 전문','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (2,'feed','','group','public','Feed 관련 전문','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (3,'member','','group','public','회원 관련 전문','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (13,'comment','cdel','command','member','댓글을 삭제 합니다.','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (14,'comment','clist','command','guest','댓글 리스트를 출력 합니다.','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (14,'comment','clist','command','public','댓글 리스트를 출력 합니다.','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (15,'comment','cwrite','command','member','댓글을 작성 합니다.','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (16,'feed','fdel','command','member','Feed를 삭제 합니다.','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (17,'feed','flike','command','member','Feed 좋아요 및 좋아요 해제','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (18,'feed','flist','command','guest','Feed List 출력','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (18,'feed','flist','command','public','Feed List 출력','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (19,'feed','fwrite','command','member','Feed를 작성 합니다.','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (20,'feed','get','command','guest','Feed의 상세한 정보를 출력 합니다.','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (20,'feed','get','command','public','Feed의 상세한 정보를 출력 합니다.','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (21,'feed','upload','command','member','이미지를 업로드 합니다.','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (22,'member','login','command','guest','로그인','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (22,'member','login','command','public','로그인','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (23,'member','logout','command','member','로그아웃','2014-01-09 18:36:38');
 insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (24,'member','modify','command','member','회원 정보를 수정 합니다.','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (25,'member','regist','command','guest','회원 가입을 합니다.','2014-01-09 18:36:38');
-insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (26,'member','terms','command','guest','회원가입 약관을 출력합니다.','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (25,'member','regist','command','public','회원 가입을 합니다.','2014-01-09 18:36:38');
+insert  into `spray_command`(`spray_command_id`,`group_name`,`command`,`stype`,`ptype`,`desc`,`created`) values (26,'member','terms','command','public','회원가입 약관을 출력합니다.','2014-01-09 18:36:38');
 
 /*Table structure for table `spray_template` */
 
@@ -709,17 +709,18 @@ CREATE TABLE `spray_template` (
   `spray_template_id` int(11) NOT NULL AUTO_INCREMENT,
   `group` enum('Spray','Jelly') DEFAULT 'Spray' COMMENT '템플릿 그룹',
   `name` varchar(100) DEFAULT NULL COMMENT '템플릿 이름',
-  `type` enum('controller','model','view','controller_validation') DEFAULT NULL COMMENT '템플릿 타입',
+  `type` enum('controller','model','view','controller_validation','toast') DEFAULT NULL COMMENT '템플릿 타입',
   `content` longtext,
   PRIMARY KEY (`spray_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `spray_template` */
 
 insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (1,'Spray','default','controller','<?php  if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');\r\n/**\r\n * Spray contrroller {class_name}\r\n *\r\n * @package spray\r\n * @author 한대승 <hoksi2k@hanmail.net>\r\n * @author Spray auto_gen\r\n */\r\nclass {class_name} extends Spray {\r\n	private $post_data;\r\n\r\n	public function __construct()\r\n	{\r\n		parent::__construct();\r\n		\r\n		$this->load->model(\'{group_name}/{command_name}_model\');\r\n		if(FALSE) $this->{command_name}_model = new {class_name}_model;\r\n	}\r\n	\r\n	public function run()\r\n	{\r\n		if($this->validation()) {\r\n			$this->responseCode = 0;\r\n			$this->responseMessage = \'검증 성공\';\r\n\r\n			$this->data = array(\r\n				\'post_data\' => $this->{command_name}_model->{command_name}($this->post_data)\r\n			);\r\n		}\r\n		\r\n		return $this->get_res();\r\n	}\r\n	\r\n	public function validation()\r\n	{\r\n		{validation}\r\n\r\n		return $ret;\r\n	}\r\n} \r\n/* End of file {group_name}/{command_name}.php */');
 insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (2,'Spray','default','view','<table class=\"table\">\r\n	<thead>\r\n	<tr>\r\n		<th class=\"span2\">Field</th>\r\n		<th></th>\r\n		<th></th>\r\n	</tr>\r\n	</thead>\r\n{field_list}\r\n	<tr>\r\n		<td></td>\r\n		<td>\r\n			<input type=\"submit\" value=\"실 행\" />\r\n			<input type=\"reset\" />\r\n		</td>\r\n		<td></td>\r\n	</tr>\r\n</table>');
-insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (3,'Spray','default','model','<?php  if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');\r\nclass {class_name}_model extends MY_Model {\r\n	private $table = NULL;\r\n	\r\n	public function __construct()\r\n	{\r\n		parent::__construct();\r\n		\r\n		$this->table = \'{group_name}\';\r\n	}\r\n	\r\n	public function {command_name}($data)\r\n	{\r\n		return array($data);\r\n	}\r\n}\r\n');
+insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (3,'Spray','default','model','<?php  if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');\r\n/**\r\n * Spray model {class_name}_model\r\n *\r\n * @package Toast\r\n * @author  한대승 <hoksi2k@hanmail.net>\r\n */\r\nclass {class_name}_model extends MY_Model {\r\n	private $table = NULL;\r\n	\r\n	public function __construct()\r\n	{\r\n		parent::__construct();\r\n		\r\n		$this->table = \'{group_name}\';\r\n	}\r\n	\r\n	public function {command_name}($data)\r\n	{\r\n		return array($data);\r\n	}\r\n}\r\n// End of file models/{group_name}/{command_name}_model_tests.php //');
 insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (4,'Spray','default','controller_validation','		$ret = FALSE;\r\n\r\n		// validation 조건 확인\r\n		$config = array(\r\n			{validation}\r\n		);\r\n\r\n		if($this->form_chk($config)) {\r\n			$this->post_data = array(\r\n				{post_data}\r\n			);\r\n\r\n			$ret = TRUE;\r\n		} else {\r\n			$this->responseCode = -1;\r\n			\r\n			foreach($this->error_chk() as $err) {\r\n				{err_code}\r\n			}\r\n\r\n			$this->responseMessage = $err ? $err : \'데이터가 입력되지 않았습니다.\';\r\n		}\r\n');
+insert  into `spray_template`(`spray_template_id`,`group`,`name`,`type`,`content`) values (5,'Spray','default','toast','<?php  if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');\r\n/**\r\n * Toast contrroller {group_name}_{command_name}_model_tests\r\n *\r\n * @package Toast\r\n * @author  한대승 <hoksi2k@hanmail.net>\r\n */\r\nclass {class_name}_{command_name}_model_tests extends Spray_toast\r\n{\r\n	public function __construct()\r\n	{\r\n		parent::__construct(__FILE__);\r\n\r\n		$this->load->model(\'{group_name}/{command_name}_model\');\r\n		if(FALSE) $this->{command_name}_model = new {model_class_name}_model;\r\n	}\r\n\r\n	public function test_{command_name}()\r\n	{\r\n		{test_data}\r\n		\r\n		$ret = $this->{command_name}_model->{command_name}($data);\r\n\r\n		$this->_assert_true(FALSE);\r\n	}\r\n}\r\n\r\n// End of file toast/{group_name}_{command_name}_model_tests.php //');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
